@@ -39,4 +39,43 @@ class StudyRoomControllerTest {
                                 "}"))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    void createStudyRoomWithBlankName() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"name\": \"\", " +
+                                "   \"intro\": \"공부할 사람 구해요\"" +
+//                                "   \"isPrivate\": \"false\", " +
+//                                "   \"password\": \"\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createStudyRoomWithInvalidNameUnder2() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"name\": \"스\", " +
+                                "   \"intro\": \"공부할 사람 구해요\"" +
+//                                "   \"isPrivate\": \"false\", " +
+//                                "   \"password\": \"\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createStudyRoomWithInvalidNameOver31() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"name\": \"" + "스".repeat(31) + "\", " +
+                                "   \"intro\": \"공부할 사람 구해요\"" +
+//                                "   \"isPrivate\": \"false\", " +
+//                                "   \"password\": \"\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
+    }
 }

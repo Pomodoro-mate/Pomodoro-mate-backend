@@ -1,7 +1,10 @@
 package com.pomodoro.pomodoromate.studyRoom.exceptions;
 
-public class IncorrectStudyRoomPasswordException extends RuntimeException {
+import com.pomodoro.pomodoromate.common.exceptions.CustomizedException;
+import org.springframework.http.HttpStatus;
+
+public class IncorrectStudyRoomPasswordException extends CustomizedException {
     public IncorrectStudyRoomPasswordException() {
-        super("비밀번호가 틀렸습니다. 다시 시도해주세요.");
+        super(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다. 다시 시도해주세요.");
     }
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Builder;
 
 @Entity
 public class StudyRoom extends BaseEntity {
@@ -32,29 +33,14 @@ public class StudyRoom extends BaseEntity {
     public StudyRoom() {
     }
 
+    @Builder
     public StudyRoom(Long id, StudyRoomInfo info) {
         this.id = id;
-//        this.info = info;
-//        this.hostId = hostId;
-//        this.status = status;
-
-        this.step = Step.PLANNING;
-    }
-
-    public StudyRoom(StudyRoomInfo info) {
         this.info = info;
 //        this.hostId = hostId;
 //        this.status = status;
 
         this.step = Step.PLANNING;
-    }
-
-    public static StudyRoom fake(StudyRoomInfo info) {
-        return new StudyRoom(
-                1L,
-                info
-//                StudyRoomStatus.NORMAL
-        );
     }
 
 //    public void changePassword(StudyRoomPassword password, PasswordEncoder passwordEncoder) {

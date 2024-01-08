@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
+import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequestDto;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
@@ -31,15 +32,16 @@ class CreateStudyRoomServiceTest {
 
     @Test
     void create() {
-        StudyRoomInfo info = new StudyRoomInfo("스터디룸", "같이 공부해요");
+        StudyRoomInfo info = StudyRoomInfo.of("스터디룸", "같이 공부해요");
 
-        CreateStudyRoomRequest request = new CreateStudyRoomRequest(
-                info
-//                new StudyRoomPassword(""),
-//                StudyRoomStatus.NORMAL
-        );
+        CreateStudyRoomRequest request = CreateStudyRoomRequest.builder()
+                .info(info)
+                .build();
 
-        StudyRoom studyRoom = StudyRoom.fake(info);
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(1L)
+                .info(info)
+                .build();
 
         given(studyRoomRepository.save(any()))
                 .willReturn(studyRoom);

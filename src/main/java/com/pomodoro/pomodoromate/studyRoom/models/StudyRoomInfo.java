@@ -30,6 +30,10 @@ public class StudyRoomInfo {
         this.intro = intro;
     }
 
+    public static StudyRoomInfo of(String name, String intro) {
+        return new StudyRoomInfo(name, intro);
+    }
+
     public void validateName(String name) {
         if (name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) {
             throw new StudyRoomNameLengthException(MIN_NAME_LENGTH, MAX_NAME_LENGTH);

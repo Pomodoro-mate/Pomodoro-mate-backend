@@ -3,12 +3,14 @@ package com.pomodoro.pomodoromate.studyRoom.dtos;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomPassword;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomStatus;
+import lombok.Builder;
 
 public class CreateStudyRoomRequest {
     private StudyRoomInfo info;
 //    private StudyRoomPassword password;
 //    private StudyRoomStatus status;
 
+    @Builder
     public CreateStudyRoomRequest(StudyRoomInfo info) {
         this.info = info;
 //        this.password = password;

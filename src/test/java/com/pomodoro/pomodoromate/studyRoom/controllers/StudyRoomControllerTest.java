@@ -2,6 +2,7 @@ package com.pomodoro.pomodoromate.studyRoom.controllers;
 
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -67,7 +68,7 @@ class StudyRoomControllerTest {
     }
 
     @Test
-    void createStudyRoomWithInvalidNameOver31() throws Exception {
+    void createStudyRoomWithInvalidNameOver30() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +

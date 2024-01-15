@@ -1,12 +1,16 @@
 package com.pomodoro.pomodoromate.studyRoom.controllers;
 
+import com.pomodoro.pomodoromate.auth.config.JwtConfig;
+import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
+import com.pomodoro.pomodoromate.user.models.UserId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,7 +21,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(StudyRoomController.class)
-@Import({SecurityConfig.class})
+@Import({SecurityConfig.class, JwtConfig.class})
 class StudyRoomControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -25,12 +29,20 @@ class StudyRoomControllerTest {
     @MockBean
     private CreateStudyRoomService createStudyRoomService;
 
+    @SpyBean
+    private JwtUtil jwtUtil;
+
     @Test
     void createStudyRoom() throws Exception {
+        UserId userId = new UserId(1L);
+
+        String token = jwtUtil.encode(userId);
+
         given(createStudyRoomService.create(any()))
                 .willReturn(1L);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"스터디\", " +

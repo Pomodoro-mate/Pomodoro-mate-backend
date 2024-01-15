@@ -9,4 +9,8 @@ public class UserId extends EntityId {
     public UserId(Long value) {
         super(value);
     }
+
+    public static UserId of(Long id) {
+        return new UserId(id);
+    }
 }

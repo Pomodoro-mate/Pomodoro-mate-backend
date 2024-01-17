@@ -1,11 +1,15 @@
 package com.pomodoro.pomodoromate.auth.controllers;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
+import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
 import com.pomodoro.pomodoromate.auth.config.JwtConfig;
-import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
-import com.pomodoro.pomodoromate.config.HttpConfig;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
+import com.pomodoro.pomodoromate.auth.exceptions.RefreshTokenExpiredException;
+import com.pomodoro.pomodoromate.config.HttpConfig;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
+import jakarta.servlet.http.Cookie;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,6 +32,9 @@ class AuthControllerTest {
     @MockBean
     private GuestLoginService guestLoginService;
 
+    @MockBean
+    private IssueTokenService issueTokenService;
+
     @Test
     void guestLogin() throws Exception {
         given(guestLoginService.login())
@@ -37,6 +44,22 @@ class AuthControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string(
                         containsString("\"accessToken\"")
+                ));
+    }
+
+    @Test
+    void tokenReissue() throws Exception {
+        String token = "not.expired.token";
+        Cookie cookie = new Cookie("refreshToken", token);
+
+        given(issueTokenService.reissue(token))
+                .willReturn(TokenDto.fake());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/token")
+                        .cookie(cookie))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(
+                        Matchers.containsString("\"accessToken\"")
                 ));
     }
 }

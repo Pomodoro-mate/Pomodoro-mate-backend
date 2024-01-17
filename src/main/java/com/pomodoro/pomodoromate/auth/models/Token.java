@@ -1,11 +1,13 @@
 package com.pomodoro.pomodoromate.auth.models;
 
+import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class Token {
@@ -44,5 +46,17 @@ public class Token {
     @Override
     public int hashCode() {
         return Objects.hash(userId);
+    }
+
+    public String getNextAccessToken(JwtUtil jwtUtil) {
+        return jwtUtil.encode(userId);
+    }
+
+    public String getNextVersion(JwtUtil jwtUtil) {
+        String tokenNumber = jwtUtil.encode(UUID.randomUUID());
+
+        this.number = tokenNumber;
+
+        return number;
     }
 }

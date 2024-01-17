@@ -1,6 +1,9 @@
 package com.pomodoro.pomodoromate.auth.applications;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
+import com.pomodoro.pomodoromate.auth.exceptions.RefreshTokenExpiredException;
+import com.pomodoro.pomodoromate.auth.exceptions.RefreshTokenNotFound;
 import com.pomodoro.pomodoromate.auth.models.Token;
 import com.pomodoro.pomodoromate.auth.repositories.RefreshTokenRepository;
 import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
@@ -30,5 +33,22 @@ public class IssueTokenService {
         refreshTokenRepository.save(tokenEntity);
 
         return new TokenDto(accessToken, refreshToken);
+    }
+
+    @Transactional
+    public TokenDto reissue(String token) {
+        try {
+            jwtUtil.decodeRefreshToken(token);
+        } catch (TokenExpiredException exception) {
+            throw new RefreshTokenExpiredException();
+        }
+
+        Token refreshToken = refreshTokenRepository.findByNumber(token)
+                .orElseThrow(RefreshTokenNotFound::new);
+
+        String accessToken = refreshToken.getNextAccessToken(jwtUtil);
+        String newRefreshToken = refreshToken.getNextVersion(jwtUtil);
+
+        return new TokenDto(accessToken, newRefreshToken);
     }
 }

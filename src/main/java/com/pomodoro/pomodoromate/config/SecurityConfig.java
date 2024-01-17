@@ -43,7 +43,9 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer ignoringCustomizer() {
         return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/auth/**"));
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/auth/**"))
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/token"))
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/logout"));
     }
 
     @Bean

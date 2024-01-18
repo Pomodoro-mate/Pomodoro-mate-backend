@@ -40,8 +40,9 @@ public class User {
         this.status = Status.ACTIVE;
     }
 
-    public static User guest() {
+    public static User guest(UserInfo userInfo) {
         return User.builder()
+                .info(userInfo)
                 .loginType(LoginType.GUEST)
                 .build();
     }

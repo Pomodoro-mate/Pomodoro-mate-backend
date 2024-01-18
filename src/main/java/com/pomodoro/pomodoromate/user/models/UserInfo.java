@@ -1,9 +1,15 @@
 package com.pomodoro.pomodoromate.user.models;
 
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
+import com.pomodoro.pomodoromate.user.exceptions.InvalidUserNicknameException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.pomodoro.pomodoromate.user.policies.UserPolicy.NICKNAME_PATTERN;
 
 @Embeddable
 @EqualsAndHashCode
@@ -20,6 +26,12 @@ public class UserInfo {
     public UserInfo() {
     }
 
+    public UserInfo(String nickname) {
+        validateNickName(nickname);
+
+        this.nickname = nickname;
+    }
+
     public UserInfo(String nickname, String imageUrl, String intro) {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
@@ -28,6 +40,15 @@ public class UserInfo {
 
     public static StudyRoomInfo of(String name, String intro) {
         return new StudyRoomInfo(name, intro);
+    }
+
+    private void validateNickName(String nickname) {
+        Pattern pattern = Pattern.compile(NICKNAME_PATTERN);
+        Matcher matcher = pattern.matcher(nickname);
+
+        if (!matcher.find()) {
+            throw new InvalidUserNicknameException();
+        }
     }
 
     public String nickname() {

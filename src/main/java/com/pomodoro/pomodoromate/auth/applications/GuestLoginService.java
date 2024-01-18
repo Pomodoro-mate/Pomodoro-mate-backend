@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.auth.applications;
 
+import com.pomodoro.pomodoromate.auth.dtos.CreateGuestRequest;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
 import com.pomodoro.pomodoromate.auth.exceptions.LoginFailed;
 import com.pomodoro.pomodoromate.user.models.User;
@@ -19,9 +20,9 @@ public class GuestLoginService {
     }
 
     @Transactional
-    public TokenDto login() {
+    public TokenDto login(CreateGuestRequest request) {
         try {
-            User guest = User.guest();
+            User guest = User.guest(request.getUserInfo());
 
             User saved = userRepository.save(guest);
             TokenDto tokenDto = issueTokenService.issue(UserId.of(saved.id()));

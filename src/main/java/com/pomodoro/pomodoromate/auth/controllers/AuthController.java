@@ -2,6 +2,8 @@ package com.pomodoro.pomodoromate.auth.controllers;
 
 import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
 import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
+import com.pomodoro.pomodoromate.auth.dtos.CreateGuestRequest;
+import com.pomodoro.pomodoromate.auth.dtos.CreateGuestRequestDto;
 import com.pomodoro.pomodoromate.auth.dtos.LoginResponseDto;
 import com.pomodoro.pomodoromate.auth.dtos.ReissuedTokenDto;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
@@ -13,9 +15,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인증 API")
@@ -36,9 +40,12 @@ public class AuthController {
     @Operation(summary = "게스트 로그인")
     @PostMapping("auth/guest")
     public ResponseEntity<LoginResponseDto> guestLogin(
-            HttpServletResponse response
+            HttpServletResponse response,
+            @Validated @RequestBody CreateGuestRequestDto requestDto
     ) {
-        TokenDto token = guestLoginService.login();
+        CreateGuestRequest request = CreateGuestRequest.of(requestDto);
+
+        TokenDto token = guestLoginService.login(request);
 
         ResponseCookie cookie = httpUtil.generateHttpOnlyCookie("refreshToken", token.refreshToken());
 

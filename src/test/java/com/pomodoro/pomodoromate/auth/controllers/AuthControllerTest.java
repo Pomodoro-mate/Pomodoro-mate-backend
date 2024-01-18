@@ -1,11 +1,9 @@
 package com.pomodoro.pomodoromate.auth.controllers;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
 import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
 import com.pomodoro.pomodoromate.auth.config.JwtConfig;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
-import com.pomodoro.pomodoromate.auth.exceptions.RefreshTokenExpiredException;
 import com.pomodoro.pomodoromate.config.HttpConfig;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import jakarta.servlet.http.Cookie;
@@ -15,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.hamcrest.core.StringContains.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,14 +37,48 @@ class AuthControllerTest {
 
     @Test
     void guestLogin() throws Exception {
-        given(guestLoginService.login())
+        given(guestLoginService.login(any()))
                 .willReturn(TokenDto.fake());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"nickname\": \"닉네임_닉네임\"" +
+                                "}"))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(
                         containsString("\"accessToken\"")
                 ));
+    }
+
+    @Test
+    void guestLoginWithInvalidNickname() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"nickname\": \"!!!\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void guestLoginWithInvalidNameUnder3() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"nickname\": \"닉\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void guestLoginWithInvalidNameOver16() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"nickname\": \"" + "닉".repeat(17) +"\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

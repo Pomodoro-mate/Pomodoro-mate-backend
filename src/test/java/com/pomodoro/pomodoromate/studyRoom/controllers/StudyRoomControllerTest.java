@@ -2,8 +2,12 @@ package com.pomodoro.pomodoromate.studyRoom.controllers;
 
 import com.pomodoro.pomodoromate.auth.config.JwtConfig;
 import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
+import com.pomodoro.pomodoromate.common.dtos.PageDto;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
+import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
+import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +15,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(StudyRoomController.class)
@@ -27,6 +37,9 @@ class StudyRoomControllerTest {
 
     @MockBean
     private CreateStudyRoomService createStudyRoomService;
+
+    @MockBean
+    private GetStudyRoomsService getStudyRoomsService;
 
     @SpyBean
     private JwtUtil jwtUtil;
@@ -89,5 +102,25 @@ class StudyRoomControllerTest {
 //                                "   \"password\": \"\"" +
                                 "}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void studyRoom() throws Exception {
+        StudyRoomSummariesDto studyRoomSummariesDto = StudyRoomSummariesDto.builder()
+                .studyRooms(List.of(
+                        StudyRoomSummaryDto.fake(1L, "스터디방 1"),
+                        StudyRoomSummaryDto.fake(2L, "스터디방 2")
+                ))
+                .pageDto(new PageDto(1, 1))
+                .build();
+
+        given(getStudyRoomsService.studyRooms(1))
+                .willReturn(studyRoomSummariesDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(
+                        "\"id\":1"
+                )));
     }
 }

@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
+import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -78,5 +79,9 @@ public class StudyRoom extends BaseEntity {
 
     public Step step() {
         return step;
+    }
+
+    public StudyRoomSummaryDto toSummaryDto() {
+        return new StudyRoomSummaryDto(id, info().name(), info.intro(), step.toString());
     }
 }

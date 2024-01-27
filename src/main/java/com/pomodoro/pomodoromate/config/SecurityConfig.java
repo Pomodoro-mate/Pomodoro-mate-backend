@@ -45,7 +45,8 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/auth/**"))
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/token"))
-                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/logout"));
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/logout"))
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"));
     }
 
     @Bean

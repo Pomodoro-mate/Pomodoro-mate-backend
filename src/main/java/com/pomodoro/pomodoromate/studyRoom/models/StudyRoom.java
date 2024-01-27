@@ -2,6 +2,7 @@ package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,7 +16,7 @@ public class StudyRoom extends BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @Enumerated
+    @Embedded
     private StudyRoomInfo info;
 
 //    @Enumerated
@@ -61,8 +62,8 @@ public class StudyRoom extends BaseEntity {
 //        }
 //    }
 
-    public Long id() {
-        return id;
+    public StudyRoomId id() {
+        return StudyRoomId.of(id);
     }
 
     public StudyRoomInfo info() {

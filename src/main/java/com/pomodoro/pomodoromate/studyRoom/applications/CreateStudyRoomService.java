@@ -31,6 +31,6 @@ public class CreateStudyRoomService {
 
         StudyRoom saved = studyRoomRepository.save(studyRoom);
 
-        return saved.id();
+        return saved.id().getValue();
     }
 }

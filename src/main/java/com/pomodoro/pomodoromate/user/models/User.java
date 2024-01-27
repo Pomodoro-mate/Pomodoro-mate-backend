@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.user.models;
 
 import com.pomodoro.pomodoromate.common.models.Status;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,10 +17,10 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    @Enumerated
+    @Embedded
     private Username username;
 
-    @Enumerated
+    @Embedded
     private UserInfo info;
 
     @Enumerated(EnumType.STRING)
@@ -47,8 +48,8 @@ public class User {
                 .build();
     }
 
-    public Long id() {
-        return id;
+    public UserId id() {
+        return UserId.of(id);
     }
 
     public Username username() {

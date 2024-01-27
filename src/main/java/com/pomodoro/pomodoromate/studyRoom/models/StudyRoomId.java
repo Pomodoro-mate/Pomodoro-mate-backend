@@ -11,4 +11,8 @@ public class StudyRoomId extends EntityId {
     public StudyRoomId(Long value) {
         super(value);
     }
+
+    public static StudyRoomId of(Long id) {
+        return new StudyRoomId(id);
+    }
 }

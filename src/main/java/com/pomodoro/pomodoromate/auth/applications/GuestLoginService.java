@@ -25,7 +25,7 @@ public class GuestLoginService {
             User guest = User.guest(request.getUserInfo());
 
             User saved = userRepository.save(guest);
-            TokenDto tokenDto = issueTokenService.issue(UserId.of(saved.id()));
+            TokenDto tokenDto = issueTokenService.issue(saved.id());
 
             return tokenDto;
         } catch (Exception e) {

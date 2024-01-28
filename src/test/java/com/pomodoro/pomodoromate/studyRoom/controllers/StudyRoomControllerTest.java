@@ -5,7 +5,9 @@ import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.common.dtos.PageDto;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
+import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
 import com.pomodoro.pomodoromate.user.models.UserId;
@@ -40,6 +42,9 @@ class StudyRoomControllerTest {
 
     @MockBean
     private GetStudyRoomsService getStudyRoomsService;
+
+    @MockBean
+    private GetStudyRoomService getStudyRoomService;
 
     @SpyBean
     private JwtUtil jwtUtil;
@@ -105,7 +110,7 @@ class StudyRoomControllerTest {
     }
 
     @Test
-    void studyRoom() throws Exception {
+    void studyRooms() throws Exception {
         StudyRoomSummariesDto studyRoomSummariesDto = StudyRoomSummariesDto.builder()
                 .studyRooms(List.of(
                         StudyRoomSummaryDto.fake(1L, "스터디방 1"),
@@ -118,6 +123,22 @@ class StudyRoomControllerTest {
                 .willReturn(studyRoomSummariesDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(
+                        "\"id\":1"
+                )));
+    }
+
+    @Test
+    void studyRoom() throws Exception {
+        Long studyRoomId = 1L;
+
+        StudyRoomDetailDto studyRoomDetailDto = StudyRoomDetailDto.fake(studyRoomId, "스터디방 1");
+
+        given(getStudyRoomService.studyRoom(studyRoomId))
+                .willReturn(studyRoomDetailDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms/" + studyRoomId))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(
                         "\"id\":1"

@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
+import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -83,6 +84,10 @@ public class StudyRoom extends BaseEntity {
     }
 
     public StudyRoomSummaryDto toSummaryDto() {
-        return new StudyRoomSummaryDto(id, info().name(), info.intro(), step.toString());
+        return new StudyRoomSummaryDto(id, info().name(), step.toString());
+    }
+
+    public StudyRoomDetailDto toDetailDto(Long participantCount) {
+        return new StudyRoomDetailDto(id, info().name(), info.intro(), step.toString(), participantCount);
     }
 }

@@ -35,11 +35,11 @@ class GetStudyRoomsServiceTest {
 
         Pageable pageable = PageRequest.of(page - 1, 8);
 
-        Page<StudyRoom> studyRooms = new PageImpl<>(List.of(
-                StudyRoom.builder().id(1L).info(new StudyRoomInfo("스터디방 1", "설명")).build(),
-                StudyRoom.builder().id(2L).info(new StudyRoomInfo("스터디방 2", "설명")).build()));
+        Page<StudyRoomSummaryDto> studyRooms = new PageImpl<>(List.of(
+                StudyRoomSummaryDto.fake(1L, "스터디방 1"),
+                StudyRoomSummaryDto.fake(2L, "스터디방 2")));
 
-        given(studyRoomRepository.findAll(pageable))
+        given(studyRoomRepository.findAllSummaryDto(pageable))
                 .willReturn(studyRooms);
 
         StudyRoomSummariesDto studyRoomSummariesDto = getStudyRoomsService.studyRooms(page);

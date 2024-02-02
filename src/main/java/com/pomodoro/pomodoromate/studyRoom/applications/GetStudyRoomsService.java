@@ -26,15 +26,12 @@ public class GetStudyRoomsService {
     public StudyRoomSummariesDto studyRooms(Integer page) {
         Pageable pageable = PageRequest.of(page - 1, 8);
 
-        Page<StudyRoom> studyRooms = studyRoomRepository.findAll(pageable);
-
-        List<StudyRoomSummaryDto> studyRoomSummaryDtos = studyRooms.stream()
-                .map(StudyRoom::toSummaryDto).collect(Collectors.toList());
+        Page<StudyRoomSummaryDto> studyRooms = studyRoomRepository.findAllSummaryDto(pageable);
 
         PageDto pageDto = new PageDto(page, studyRooms.getTotalPages());
 
         return new StudyRoomSummariesDto(
-                studyRoomSummaryDtos, pageDto
+                studyRooms.toList(), pageDto
         );
     }
 }

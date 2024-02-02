@@ -83,10 +83,6 @@ public class StudyRoom extends BaseEntity {
         return step;
     }
 
-    public StudyRoomSummaryDto toSummaryDto() {
-        return new StudyRoomSummaryDto(id, info().name(), step.toString());
-    }
-
     public StudyRoomDetailDto toDetailDto(Long participantCount) {
         return new StudyRoomDetailDto(id, info().name(), info.intro(), step.toString(), participantCount);
     }

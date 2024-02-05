@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
@@ -13,13 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateStudyRoomService {
     private final StudyRoomRepository studyRoomRepository;
     private final ValidateUserService validateUserService;
+    private final ParticipateService participateService;
     private final PasswordEncoder passwordEncoder;
 
     public CreateStudyRoomService(StudyRoomRepository studyRoomRepository,
                                   ValidateUserService validateUserService,
+                                  ParticipateService participateService,
                                   PasswordEncoder passwordEncoder) {
         this.studyRoomRepository = studyRoomRepository;
         this.validateUserService = validateUserService;
+        this.participateService = participateService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -36,6 +40,8 @@ public class CreateStudyRoomService {
 //        }
 
         StudyRoom saved = studyRoomRepository.save(studyRoom);
+
+        participateService.participate(userId, studyRoom.id());
 
         return saved.id().getValue();
     }

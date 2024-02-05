@@ -6,6 +6,8 @@ import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
+import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
+import com.pomodoro.pomodoromate.user.models.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,14 +21,16 @@ import static org.mockito.Mockito.mock;
 class GetStudyRoomServiceTest {
     private StudyRoomRepository studyRoomRepository;
     private ParticipantRepository participantRepository;
+    private ValidateUserService validateUserService;
     private GetStudyRoomService getStudyRoomService;
 
     @BeforeEach
     void setUp() {
         studyRoomRepository = mock(StudyRoomRepository.class);
         participantRepository = mock(ParticipantRepository.class);
+        validateUserService = mock(ValidateUserService.class);
         getStudyRoomService = new GetStudyRoomService(
-                studyRoomRepository, participantRepository);
+                studyRoomRepository, participantRepository, validateUserService);
     }
 
     @Test
@@ -44,7 +48,9 @@ class GetStudyRoomServiceTest {
         given(participantRepository.countActiveByStudyRoomId(studyRoom.id()))
                 .willReturn(1L);
 
-        StudyRoomDetailDto studyRoomDetailDto = getStudyRoomService.studyRoom(studyRoomId);
+        UserId userId = UserId.of(1L);
+
+        StudyRoomDetailDto studyRoomDetailDto = getStudyRoomService.studyRoom(studyRoomId, userId);
 
         assertThat(studyRoomDetailDto.id()).isEqualTo(studyRoomId);
         assertThat(studyRoomDetailDto.name()).isEqualTo(studyRoom.info().name());
@@ -57,7 +63,9 @@ class GetStudyRoomServiceTest {
         given(studyRoomRepository.findById(invalidStudyRoomId))
                 .willThrow(StudyRoomNotFoundException.class);
 
+        UserId userId = UserId.of(1L);
+
         assertThrows(StudyRoomNotFoundException.class,
-                () -> getStudyRoomService.studyRoom(invalidStudyRoomId));
+                () -> getStudyRoomService.studyRoom(invalidStudyRoomId, userId));
     }
 }

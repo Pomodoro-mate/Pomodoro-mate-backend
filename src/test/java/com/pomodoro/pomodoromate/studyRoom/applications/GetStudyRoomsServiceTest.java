@@ -2,9 +2,10 @@ package com.pomodoro.pomodoromate.studyRoom.applications;
 
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
-import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
-import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
+import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
+import com.pomodoro.pomodoromate.user.models.UserId;
+import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -15,18 +16,19 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 class GetStudyRoomsServiceTest {
     private StudyRoomRepository studyRoomRepository;
+    private ValidateUserService validateUserService;
     private GetStudyRoomsService getStudyRoomsService;
 
     @BeforeEach
     void setUp() {
         studyRoomRepository = mock(StudyRoomRepository.class);
-        getStudyRoomsService = new GetStudyRoomsService(studyRoomRepository);
+        validateUserService = mock(ValidateUserService.class);
+        getStudyRoomsService = new GetStudyRoomsService(studyRoomRepository, validateUserService);
     }
 
     @Test
@@ -42,7 +44,9 @@ class GetStudyRoomsServiceTest {
         given(studyRoomRepository.findAllSummaryDto(pageable))
                 .willReturn(studyRooms);
 
-        StudyRoomSummariesDto studyRoomSummariesDto = getStudyRoomsService.studyRooms(page);
+        UserId userId = UserId.of(1L);
+
+        StudyRoomSummariesDto studyRoomSummariesDto = getStudyRoomsService.studyRooms(page, userId);
 
         assertThat(studyRoomSummariesDto.studyRooms()).hasSize(2);
         assertThat(studyRoomSummariesDto.studyRooms().get(0).name()).isEqualTo("스터디방 1");

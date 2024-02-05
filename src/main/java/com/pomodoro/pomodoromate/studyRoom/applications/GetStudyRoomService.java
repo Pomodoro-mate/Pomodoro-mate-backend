@@ -5,6 +5,8 @@ import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
+import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
+import com.pomodoro.pomodoromate.user.models.UserId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,15 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetStudyRoomService {
     private final StudyRoomRepository studyRoomRepository;
     private final ParticipantRepository participantRepository;
+    private final ValidateUserService validateUserService;
 
     public GetStudyRoomService(StudyRoomRepository studyRoomRepository,
-                               ParticipantRepository participantRepository) {
+                               ParticipantRepository participantRepository,
+                               ValidateUserService validateUserService) {
         this.studyRoomRepository = studyRoomRepository;
         this.participantRepository = participantRepository;
+        this.validateUserService = validateUserService;
     }
 
     @Transactional(readOnly = true)
-    public StudyRoomDetailDto studyRoom(Long studyRoomId) {
+    public StudyRoomDetailDto studyRoom(Long studyRoomId, UserId userId) {
+        validateUserService.validate(userId);
+
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
                 .orElseThrow(StudyRoomNotFoundException::new);
 

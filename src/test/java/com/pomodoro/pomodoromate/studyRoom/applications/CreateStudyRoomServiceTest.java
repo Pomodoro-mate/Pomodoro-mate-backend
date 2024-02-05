@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.mock;
 class CreateStudyRoomServiceTest {
     private StudyRoomRepository studyRoomRepository;
     private ValidateUserService validateUserService;
+    private ParticipateService participateService;
     private PasswordEncoder passwordEncoder;
     private CreateStudyRoomService createStudyRoomService;
 
@@ -28,9 +30,10 @@ class CreateStudyRoomServiceTest {
     void setUp() {
         studyRoomRepository = mock(StudyRoomRepository.class);
         validateUserService = mock(ValidateUserService.class);
+        participateService = mock(ParticipateService.class);
         passwordEncoder = mock(Argon2PasswordEncoder.class);
         createStudyRoomService = new CreateStudyRoomService(
-                studyRoomRepository, validateUserService, passwordEncoder);
+                studyRoomRepository, validateUserService, participateService, passwordEncoder);
     }
 
     @Test

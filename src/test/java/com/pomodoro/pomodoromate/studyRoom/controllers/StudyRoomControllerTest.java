@@ -17,8 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -55,7 +53,7 @@ class StudyRoomControllerTest {
 
         String token = jwtUtil.encode(userId);
 
-        given(createStudyRoomService.create(any()))
+        given(createStudyRoomService.create(any(), any()))
                 .willReturn(1L);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
@@ -111,6 +109,10 @@ class StudyRoomControllerTest {
 
     @Test
     void studyRooms() throws Exception {
+        UserId userId = new UserId(1L);
+
+        String token = jwtUtil.encode(userId);
+
         StudyRoomSummariesDto studyRoomSummariesDto = StudyRoomSummariesDto.builder()
                 .studyRooms(List.of(
                         StudyRoomSummaryDto.fake(1L, "스터디방 1"),
@@ -119,10 +121,11 @@ class StudyRoomControllerTest {
                 .pageDto(new PageDto(1, 1))
                 .build();
 
-        given(getStudyRoomsService.studyRooms(1))
+        given(getStudyRoomsService.studyRooms(1, userId))
                 .willReturn(studyRoomSummariesDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms")
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(
                         "\"id\":1"
@@ -131,14 +134,19 @@ class StudyRoomControllerTest {
 
     @Test
     void studyRoom() throws Exception {
+        UserId userId = new UserId(1L);
+
+        String token = jwtUtil.encode(userId);
+
         Long studyRoomId = 1L;
 
         StudyRoomDetailDto studyRoomDetailDto = StudyRoomDetailDto.fake(studyRoomId, "스터디방 1");
 
-        given(getStudyRoomService.studyRoom(studyRoomId))
+        given(getStudyRoomService.studyRoom(studyRoomId, userId))
                 .willReturn(studyRoomDetailDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms/" + studyRoomId))
+        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms/" + studyRoomId)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(
                         "\"id\":1"

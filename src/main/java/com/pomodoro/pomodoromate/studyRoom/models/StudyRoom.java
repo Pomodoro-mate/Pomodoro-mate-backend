@@ -2,7 +2,7 @@ package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
-import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -85,5 +85,19 @@ public class StudyRoom extends BaseEntity {
 
     public StudyRoomDetailDto toDetailDto(Long participantCount) {
         return new StudyRoomDetailDto(id, info().name(), info.intro(), step.toString(), participantCount);
+    }
+
+    public void validateIncomplete() {
+        if (isStep(Step.COMPLETED)) {
+            throw new StudyAlreadyCompletedException();
+        }
+    }
+
+    private boolean isStep(Step step) {
+        return this.step == step;
+    }
+
+    public void complete() {
+        this.step = Step.COMPLETED;
     }
 }

@@ -35,6 +35,8 @@ public class ParticipateService {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.getValue())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
+        studyRoom.validateIncomplete();
+
         Participant participant = Participant.builder()
                 .studyRoomId(studyRoom.id())
                 .userId(user.id())

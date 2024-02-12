@@ -3,9 +3,12 @@ package com.pomodoro.pomodoromate.participant.applications;
 import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
+import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
+import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.models.User;
 import com.pomodoro.pomodoromate.user.models.UserId;
@@ -98,5 +101,33 @@ class ParticipateServiceTest {
 
         assertThrows(StudyRoomNotFoundException.class,
                 () -> participateService.participate(user.id(), invalidStudyRoomId));
+    }
+
+    @Test
+    void participateWithStudyAlreadyCompleted() {
+        User user = User.builder()
+                .id(1L)
+                .build();
+
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(1L)
+                .build();
+
+        studyRoom.complete();
+
+        Participant participant = Participant.builder()
+                .id(1L)
+                .studyRoomId(studyRoom.id())
+                .userId(user.id())
+                .build();
+
+        given(userRepository.findById(user.id().getValue()))
+                .willReturn(Optional.of(user));
+
+        given(studyRoomRepository.findById(studyRoom.id().getValue()))
+                .willReturn(Optional.of(studyRoom));
+
+        assertThrows(StudyAlreadyCompletedException.class,
+                () -> participateService.participate(user.id(), studyRoom.id()));
     }
 }

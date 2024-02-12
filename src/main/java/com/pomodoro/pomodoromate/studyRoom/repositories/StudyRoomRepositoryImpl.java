@@ -38,7 +38,7 @@ public class StudyRoomRepositoryImpl implements StudyRoomRepositoryQueryDsl {
                         studyRoom.step,
                         getActiveParticipantCount(studyRoom)
                 ))
-                .where(studyRoom.step.ne(Step.DONE))
+                .where(studyRoom.step.ne(Step.COMPLETED))
                 .orderBy(studyRoom.createAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -66,7 +66,7 @@ public class StudyRoomRepositoryImpl implements StudyRoomRepositoryQueryDsl {
         return queryFactory
                 .select(studyRoom.count())
                 .from(studyRoom)
-                .where(studyRoom.step.ne(Step.DONE))
+                .where(studyRoom.step.ne(Step.COMPLETED))
                 .fetchOne();
     }
 }

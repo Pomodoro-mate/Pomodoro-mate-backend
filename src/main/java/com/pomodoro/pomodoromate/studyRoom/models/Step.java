@@ -5,5 +5,5 @@ public enum Step {
     STUDYING,
     RETROSPECT,
     RESTING,
-    DONE
+    COMPLETED
 }

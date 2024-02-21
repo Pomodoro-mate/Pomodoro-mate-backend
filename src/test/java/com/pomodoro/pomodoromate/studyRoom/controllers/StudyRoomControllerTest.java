@@ -7,6 +7,7 @@ import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyProgressService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
@@ -43,6 +44,9 @@ class StudyRoomControllerTest {
 
     @MockBean
     private GetStudyRoomService getStudyRoomService;
+
+    @MockBean
+    private StudyProgressService studyProgressService;
 
     @SpyBean
     private JwtUtil jwtUtil;
@@ -151,5 +155,22 @@ class StudyRoomControllerTest {
                 .andExpect(content().string(containsString(
                         "\"id\":1"
                 )));
+    }
+
+    @Test
+    void proceedToNextStep() throws Exception {
+        UserId userId = new UserId(1L);
+
+        String token = jwtUtil.encode(userId);
+
+        Long studyRoomId = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/studyrooms/" + studyRoomId + "/next-step")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "   \"step\": \"PLANNING\"" +
+                                "}"))
+                .andExpect(status().isNoContent());
     }
 }

@@ -2,6 +2,7 @@ package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -99,5 +100,15 @@ public class StudyRoom extends BaseEntity {
 
     public void complete() {
         this.step = Step.COMPLETED;
+    }
+
+    public void validateCurrentStep(Step step) {
+        if (!isStep(step)) {
+            throw new InvalidStepException();
+        }
+    }
+
+    public void proceedToNextStep() {
+        this.step = step.nextStep();
     }
 }

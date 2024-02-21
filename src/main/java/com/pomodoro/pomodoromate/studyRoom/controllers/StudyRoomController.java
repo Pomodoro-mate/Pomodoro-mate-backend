@@ -3,10 +3,14 @@ package com.pomodoro.pomodoromate.studyRoom.controllers;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyProgressService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequestDto;
+import com.pomodoro.pomodoromate.studyRoom.dtos.StudyProgressRequestDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
+import com.pomodoro.pomodoromate.studyRoom.models.Step;
+import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,13 +36,16 @@ public class StudyRoomController {
     private final CreateStudyRoomService createStudyRoomService;
     private final GetStudyRoomsService getStudyRoomsService;
     private final GetStudyRoomService getStudyRoomService;
+    private final StudyProgressService studyProgressService;
 
     public StudyRoomController(CreateStudyRoomService createStudyRoomService,
                                GetStudyRoomsService getStudyRoomsService,
-                               GetStudyRoomService getStudyRoomService) {
+                               GetStudyRoomService getStudyRoomService,
+                               StudyProgressService studyProgressService) {
         this.createStudyRoomService = createStudyRoomService;
         this.getStudyRoomsService = getStudyRoomsService;
         this.getStudyRoomService = getStudyRoomService;
+        this.studyProgressService = studyProgressService;
     }
 
     @Operation(summary = "스터디룸 목록 조회")
@@ -74,5 +82,19 @@ public class StudyRoomController {
         Long studyRoomId = createStudyRoomService.create(request, userId);
 
         return ResponseEntity.created(URI.create("/studyrooms/" + studyRoomId)).build();
+    }
+
+    @Operation(summary = "다음 스터디 단계 진행")
+    @ApiResponse(responseCode = "204")
+    @PutMapping("{studyRoomId}/next-step")
+    public ResponseEntity<Void> proceedToNextStep(
+            @RequestAttribute UserId userId,
+            @PathVariable Long studyRoomId,
+            @Validated @RequestBody StudyProgressRequestDto requestDto
+    ) {
+        studyProgressService.proceedToNextStep(
+                userId, StudyRoomId.of(studyRoomId), Step.valueOf(requestDto.step()));
+
+        return ResponseEntity.noContent().build();
     }
 }

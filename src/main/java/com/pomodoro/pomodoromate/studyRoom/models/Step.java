@@ -5,5 +5,15 @@ public enum Step {
     STUDYING,
     RETROSPECT,
     RESTING,
-    COMPLETED
+    COMPLETED;
+
+    public Step nextStep() {
+        return switch (this) {
+            case PLANNING -> STUDYING;
+            case STUDYING -> RETROSPECT;
+            case RETROSPECT -> RESTING;
+            case RESTING -> PLANNING;
+            default -> COMPLETED;
+        };
+    }
 }

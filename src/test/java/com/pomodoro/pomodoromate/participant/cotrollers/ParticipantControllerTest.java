@@ -4,6 +4,7 @@ import com.pomodoro.pomodoromate.auth.config.JwtConfig;
 import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
 import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
+import com.pomodoro.pomodoromate.participant.applications.LeaveStudyService;
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
@@ -30,6 +31,9 @@ class ParticipantControllerTest {
     @MockBean
     private ParticipateService participateService;
 
+    @MockBean
+    private LeaveStudyService leaveStudyService;
+
     @SpyBean
     private JwtUtil jwtUtil;
 
@@ -46,5 +50,19 @@ class ParticipantControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms/" + studyRoomId + "/participants")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void leaveStudy() throws Exception {
+        UserId userId = UserId.of(1L);
+        String token = jwtUtil.encode(userId);
+
+        Long studyRoomId = 1L;
+        Long participantId = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/studyrooms/" + studyRoomId +
+                                "/participants/" + participantId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
     }
 }

@@ -1,7 +1,10 @@
 package com.pomodoro.pomodoromate.participant.models;
 
+import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
+import com.pomodoro.pomodoromate.common.exceptions.AuthorizationException;
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.common.models.Status;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import jakarta.persistence.AttributeOverride;
@@ -56,5 +59,21 @@ public class Participant extends BaseEntity {
 
     public Status status() {
         return status;
+    }
+
+    public void validateParticipant(UserId userId) {
+        if (!this.userId.equals(userId)) {
+            throw new AuthorizationException();
+        }
+    }
+
+    public void delete() {
+        this.status = Status.DELETED;
+    }
+
+    public void validateStudyRoom(StudyRoomId studyRoomId) {
+        if (!this.studyRoomId.equals(studyRoomId)) {
+            throw new StudyRoomMismatchException();
+        }
     }
 }

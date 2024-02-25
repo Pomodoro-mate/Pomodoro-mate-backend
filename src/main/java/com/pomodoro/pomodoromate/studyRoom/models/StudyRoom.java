@@ -85,7 +85,8 @@ public class StudyRoom extends BaseEntity {
     }
 
     public StudyRoomDetailDto toDetailDto(Long participantCount) {
-        return new StudyRoomDetailDto(id, info().name(), info.intro(), step.toString(), participantCount);
+        return new StudyRoomDetailDto(id, info().name(), info.intro(),
+                step.toString(), participantCount, updateAt());
     }
 
     public void validateIncomplete() {

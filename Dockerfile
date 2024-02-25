@@ -1,7 +1,7 @@
 # 첫 번째 스테이지: JRE 생성
 FROM amazoncorretto:17-alpine3.18 as builder-jre
 
-RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main/ binutils=2.41-r0
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main/ binutils=2.42-r0
 
 RUN $JAVA_HOME/bin/jlink \
     --module-path "$JAVA_HOME/jmods" \

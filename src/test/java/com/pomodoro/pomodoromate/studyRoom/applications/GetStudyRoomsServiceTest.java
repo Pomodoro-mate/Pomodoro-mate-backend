@@ -49,6 +49,6 @@ class GetStudyRoomsServiceTest {
         StudyRoomSummariesDto studyRoomSummariesDto = getStudyRoomsService.studyRooms(page, userId);
 
         assertThat(studyRoomSummariesDto.studyRooms()).hasSize(2);
-        assertThat(studyRoomSummariesDto.studyRooms().get(0).name()).isEqualTo("스터디방 1");
+        assertThat(studyRoomSummariesDto.studyRooms().get(0).getName()).isEqualTo("스터디방 1");
     }
 }

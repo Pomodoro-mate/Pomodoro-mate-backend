@@ -38,6 +38,7 @@ public class StudyRoomRepositoryImpl implements StudyRoomRepositoryQueryDsl {
                         studyRoom.step,
                         getActiveParticipantCount(studyRoom)
                 ))
+                .from(studyRoom)
                 .where(studyRoom.step.ne(Step.COMPLETED))
                 .orderBy(studyRoom.createAt.desc())
                 .offset(pageable.getOffset())

@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
@@ -11,6 +12,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Builder;
+
+import java.util.List;
 
 @Entity
 public class StudyRoom extends BaseEntity {
@@ -84,9 +87,9 @@ public class StudyRoom extends BaseEntity {
         return step;
     }
 
-    public StudyRoomDetailDto toDetailDto(Long participantCount) {
+    public StudyRoomDetailDto toDetailDto(List<ParticipantSummaryDto> participantSummaryDtos) {
         return new StudyRoomDetailDto(id, info().name(), info.intro(),
-                step.toString(), participantCount, updateAt());
+                step.toString(), participantSummaryDtos, updateAt());
     }
 
     public void validateIncomplete() {

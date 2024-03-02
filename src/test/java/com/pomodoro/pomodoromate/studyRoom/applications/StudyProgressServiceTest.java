@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.rmi.StubNotFoundException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +44,7 @@ class StudyProgressServiceTest {
                 .id(10L)
                 .build();
 
-        given(studyRoomRepository.findById(studyRoom.id().getValue()))
+        given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         assertDoesNotThrow(() -> studyProgressService
@@ -65,7 +64,7 @@ class StudyProgressServiceTest {
 
         StudyRoomId invalidStudyRoomId = StudyRoomId.of(999_999_999L);
 
-        given(studyRoomRepository.findById(invalidStudyRoomId.getValue()))
+        given(studyRoomRepository.findById(invalidStudyRoomId.value()))
                 .willThrow(StudyRoomNotFoundException.class);
 
         assertThrows(StudyRoomNotFoundException.class,
@@ -84,7 +83,7 @@ class StudyProgressServiceTest {
                 .build();
         studyRoom.complete();
 
-        given(studyRoomRepository.findById(studyRoom.id().getValue()))
+        given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         assertThrows(StudyAlreadyCompletedException.class,
@@ -102,7 +101,7 @@ class StudyProgressServiceTest {
                 .id(10L)
                 .build();
 
-        given(studyRoomRepository.findById(studyRoom.id().getValue()))
+        given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         assertThrows(InvalidStepException.class,

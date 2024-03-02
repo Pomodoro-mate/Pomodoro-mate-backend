@@ -25,7 +25,7 @@ public class JwtUtil {
 
     public String encode(UserId userId) {
         return JWT.create()
-                .withClaim("userId", userId.getValue())
+                .withClaim("userId", userId.value())
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDATION_SECOND))
                 .sign(algorithm);

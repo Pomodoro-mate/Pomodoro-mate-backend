@@ -3,11 +3,11 @@ package com.pomodoro.pomodoromate.studyRoom.dtos;
 import com.pomodoro.pomodoromate.studyRoom.models.Step;
 
 public class StudyRoomSummaryDto {
-        private Long id;
-        private String name;
-        private String intro;
-        private String step;
-        private Long participantCount;
+    private Long id;
+    private String name;
+    private String intro;
+    private String step;
+    private Long participantCount;
 
     public StudyRoomSummaryDto(Long id, String name, String intro, Step step, Long participantCount) {
         this.id = id;

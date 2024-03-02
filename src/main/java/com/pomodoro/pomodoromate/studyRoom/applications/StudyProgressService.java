@@ -25,7 +25,7 @@ public class StudyProgressService {
     public void proceedToNextStep(UserId userId, StudyRoomId studyRoomId, Step step) {
         validateUserService.validate(userId);
 
-        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.getValue())
+        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
         studyRoom.validateCurrentStep(step);

@@ -29,13 +29,13 @@ public class LeaveStudyService {
     }
 
     public void leaveStudy(UserId userId, StudyRoomId studyRoomId, ParticipantId participantId) {
-        User user = userRepository.findById(userId.getValue())
+        User user = userRepository.findById(userId.value())
                 .orElseThrow(UnauthorizedException::new);
 
-        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.getValue())
+        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
-        Participant participant = participantRepository.findById(participantId.getValue())
+        Participant participant = participantRepository.findById(participantId.value())
                 .orElseThrow(ParticipantNotFoundException::new);
 
         participant.validateStudyRoom(studyRoom.id());

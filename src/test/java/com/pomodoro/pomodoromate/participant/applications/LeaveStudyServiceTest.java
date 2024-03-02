@@ -7,7 +7,6 @@ import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotFoundExcep
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
-import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
@@ -67,13 +66,13 @@ class LeaveStudyServiceTest {
                     .userId(user.id())
                     .build();
 
-            given(userRepository.findById(user.id().getValue()))
+            given(userRepository.findById(user.id().value()))
                     .willReturn(Optional.of(user));
 
-            given(studyRoomRepository.findById(studyRoom.id().getValue()))
+            given(studyRoomRepository.findById(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.findById(participant.id().getValue()))
+            given(participantRepository.findById(participant.id().value()))
                     .willReturn(Optional.of(participant));
 
             assertDoesNotThrow(() -> leaveStudyService.leaveStudy(user.id(), studyRoom.id(), participant.id()));
@@ -94,7 +93,7 @@ class LeaveStudyServiceTest {
 
             ParticipantId participantId = ParticipantId.of(1L);
 
-            given(userRepository.findById(invalidUserId.getValue()))
+            given(userRepository.findById(invalidUserId.value()))
                     .willThrow(UnauthorizedException.class);
 
             assertThrows(UnauthorizedException.class,
@@ -112,10 +111,10 @@ class LeaveStudyServiceTest {
 
             ParticipantId participantId = ParticipantId.of(1L);
 
-            given(userRepository.findById(user.id().getValue()))
+            given(userRepository.findById(user.id().value()))
                     .willReturn(Optional.of(user));
 
-            given(studyRoomRepository.findById(invalidStudyRoomId.getValue()))
+            given(studyRoomRepository.findById(invalidStudyRoomId.value()))
                     .willThrow(StudyRoomNotFoundException.class);
 
             assertThrows(StudyRoomNotFoundException.class,
@@ -135,13 +134,13 @@ class LeaveStudyServiceTest {
 
             ParticipantId invalidParticipantId = ParticipantId.of(999_999L);
 
-            given(userRepository.findById(user.id().getValue()))
+            given(userRepository.findById(user.id().value()))
                     .willReturn(Optional.of(user));
 
-            given(studyRoomRepository.findById(studyRoom.id().getValue()))
+            given(studyRoomRepository.findById(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.findById(invalidParticipantId.getValue()))
+            given(participantRepository.findById(invalidParticipantId.value()))
                     .willThrow(ParticipantNotFoundException.class);
 
             assertThrows(ParticipantNotFoundException.class,
@@ -167,13 +166,13 @@ class LeaveStudyServiceTest {
                     .userId(user.id())
                     .build();
 
-            given(userRepository.findById(user.id().getValue()))
+            given(userRepository.findById(user.id().value()))
                     .willReturn(Optional.of(user));
 
-            given(studyRoomRepository.findById(studyRoom.id().getValue()))
+            given(studyRoomRepository.findById(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.findById(participant.id().getValue()))
+            given(participantRepository.findById(participant.id().value()))
                     .willReturn(Optional.of(participant));
 
             assertThrows(StudyRoomMismatchException.class,
@@ -199,13 +198,13 @@ class LeaveStudyServiceTest {
                     .userId(otherUserId)
                     .build();
 
-            given(userRepository.findById(user.id().getValue()))
+            given(userRepository.findById(user.id().value()))
                     .willReturn(Optional.of(user));
 
-            given(studyRoomRepository.findById(studyRoom.id().getValue()))
+            given(studyRoomRepository.findById(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.findById(participant.id().getValue()))
+            given(participantRepository.findById(participant.id().value()))
                     .willReturn(Optional.of(participant));
 
             assertThrows(AuthorizationException.class,

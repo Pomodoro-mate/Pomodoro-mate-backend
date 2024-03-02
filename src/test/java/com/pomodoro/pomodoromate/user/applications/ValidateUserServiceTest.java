@@ -1,9 +1,7 @@
 package com.pomodoro.pomodoromate.user.applications;
 
 import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
-import com.pomodoro.pomodoromate.user.models.User;
 import com.pomodoro.pomodoromate.user.models.UserId;
-import com.pomodoro.pomodoromate.user.models.UserInfo;
 import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +24,7 @@ class ValidateUserServiceTest {
     void validateSuccess() {
         UserId userId = UserId.of(1L);
 
-        given(userRepository.existsById(userId.getValue()))
+        given(userRepository.existsById(userId.value()))
                 .willReturn(true);
 
         assertDoesNotThrow(() -> validateUserService.validate(userId));
@@ -36,7 +34,7 @@ class ValidateUserServiceTest {
     void validateWithUnauthorized() {
         UserId invalidUserId = UserId.of(999_999L);
 
-        given(userRepository.existsById(invalidUserId.getValue()))
+        given(userRepository.existsById(invalidUserId.value()))
                 .willReturn(false);
 
         assertThrows(UnauthorizedException.class,

@@ -29,10 +29,10 @@ public class ParticipateService {
 
     @Transactional
     public Long participate(UserId userId, StudyRoomId studyRoomId) {
-        User user = userRepository.findById(userId.getValue())
+        User user = userRepository.findById(userId.value())
                 .orElseThrow(UnauthorizedException::new);
 
-        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.getValue())
+        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
         studyRoom.validateIncomplete();
@@ -40,10 +40,11 @@ public class ParticipateService {
         Participant participant = Participant.builder()
                 .studyRoomId(studyRoom.id())
                 .userId(user.id())
+                .userInfo(user.info())
                 .build();
 
         Participant saved = participantRepository.save(participant);
 
-        return saved.id().getValue();
+        return saved.id().value();
     }
 }

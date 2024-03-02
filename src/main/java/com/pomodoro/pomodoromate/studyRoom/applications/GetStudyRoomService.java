@@ -1,5 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
+import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
@@ -9,6 +11,8 @@ import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class GetStudyRoomService {
@@ -31,8 +35,11 @@ public class GetStudyRoomService {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
                 .orElseThrow(StudyRoomNotFoundException::new);
 
-        Long participantCount = participantRepository.countActiveByStudyRoomId(studyRoom.id());
+        List<Participant> participants = participantRepository.findAllActiveByStudyRoomId(studyRoom.id());
 
-        return studyRoom.toDetailDto(participantCount);
+        List<ParticipantSummaryDto> participantSummaryDtos = participants.stream()
+                .map(Participant::toSummaryDto).toList();
+
+        return studyRoom.toDetailDto(participantSummaryDtos);
     }
 }

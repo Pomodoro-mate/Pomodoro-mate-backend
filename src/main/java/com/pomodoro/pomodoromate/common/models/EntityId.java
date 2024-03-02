@@ -1,7 +1,6 @@
 package com.pomodoro.pomodoromate.common.models;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.MappedSuperclass;
 
 import java.io.Serializable;
@@ -19,7 +18,7 @@ public abstract class EntityId implements Serializable {
         this.value = value;
     }
 
-    public Long getValue() {
+    public Long value() {
         return value;
     }
 

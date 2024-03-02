@@ -43,6 +43,6 @@ public class CreateStudyRoomService {
 
         participateService.participate(userId, studyRoom.id());
 
-        return saved.id().getValue();
+        return saved.id().value();
     }
 }

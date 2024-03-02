@@ -1,12 +1,13 @@
 package com.pomodoro.pomodoromate.participant.models;
 
-import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
 import com.pomodoro.pomodoromate.common.exceptions.AuthorizationException;
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.common.models.Status;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
+import com.pomodoro.pomodoromate.user.models.UserInfo;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -31,6 +32,9 @@ public class Participant extends BaseEntity {
     @AttributeOverride(name = "value", column = @Column(name = "userId"))
     private UserId userId;
 
+    @Embedded
+    private UserInfo userInfo;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -38,10 +42,11 @@ public class Participant extends BaseEntity {
     }
 
     @Builder
-    public Participant(Long id, StudyRoomId studyRoomId, UserId userId) {
+    public Participant(Long id, StudyRoomId studyRoomId, UserId userId, UserInfo userInfo) {
         this.id = id;
         this.studyRoomId = studyRoomId;
         this.userId = userId;
+        this.userInfo = userInfo;
         this.status = Status.ACTIVE;
     }
 
@@ -55,6 +60,10 @@ public class Participant extends BaseEntity {
 
     public UserId userId() {
         return userId;
+    }
+
+    public UserInfo userInfo() {
+        return userInfo;
     }
 
     public Status status() {
@@ -75,5 +84,10 @@ public class Participant extends BaseEntity {
         if (!this.studyRoomId.equals(studyRoomId)) {
             throw new StudyRoomMismatchException();
         }
+    }
+
+    public ParticipantSummaryDto toSummaryDto() {
+        return new ParticipantSummaryDto(id, userId.value(),
+                userInfo.nickname(), userInfo.imageUrl());
     }
 }

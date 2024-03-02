@@ -14,7 +14,7 @@ public class ValidateUserService {
     }
 
     public void validate(UserId userId) {
-        if (!userRepository.existsById(userId.getValue())) {
+        if (!userRepository.existsById(userId.value())) {
             throw new UnauthorizedException();
         }
     }

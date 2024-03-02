@@ -35,7 +35,7 @@ class GuestLoginServiceTest {
                 .userInfo(new UserInfo("닉네임")).build();
 
         User user = User.builder()
-                .id(userId.getValue())
+                .id(userId.value())
                 .info(new UserInfo("닉네임"))
                 .loginType(LoginType.GUEST)
                 .build();

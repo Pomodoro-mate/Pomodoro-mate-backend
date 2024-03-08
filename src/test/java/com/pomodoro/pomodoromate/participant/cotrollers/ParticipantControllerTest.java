@@ -47,7 +47,7 @@ class ParticipantControllerTest {
         given(participateService.participate(userId, StudyRoomId.of(studyRoomId)))
                 .willReturn(1L);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms/" + studyRoomId + "/participants")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/studyrooms/" + studyRoomId + "/participants")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isCreated());
     }
@@ -60,7 +60,7 @@ class ParticipantControllerTest {
         Long studyRoomId = 1L;
         Long participantId = 1L;
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/studyrooms/" + studyRoomId +
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/studyrooms/" + studyRoomId +
                                 "/participants/" + participantId)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());

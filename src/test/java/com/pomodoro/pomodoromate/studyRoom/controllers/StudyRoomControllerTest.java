@@ -60,7 +60,7 @@ class StudyRoomControllerTest {
         given(createStudyRoomService.create(any(), any()))
                 .willReturn(1L);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/studyrooms")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
@@ -74,7 +74,7 @@ class StudyRoomControllerTest {
 
     @Test
     void createStudyRoomWithBlankName() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/studyrooms")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"\", " +
@@ -87,7 +87,7 @@ class StudyRoomControllerTest {
 
     @Test
     void createStudyRoomWithInvalidNameUnder2() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/studyrooms")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"스\", " +
@@ -100,7 +100,7 @@ class StudyRoomControllerTest {
 
     @Test
     void createStudyRoomWithInvalidNameOver30() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/studyrooms")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/studyrooms")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"" + "스".repeat(31) + "\", " +
@@ -128,7 +128,7 @@ class StudyRoomControllerTest {
         given(getStudyRoomsService.studyRooms(1, userId))
                 .willReturn(studyRoomSummariesDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/studyrooms")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(
@@ -149,7 +149,7 @@ class StudyRoomControllerTest {
         given(getStudyRoomService.studyRoom(studyRoomId, userId))
                 .willReturn(studyRoomDetailDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/studyrooms/" + studyRoomId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/studyrooms/" + studyRoomId)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(
@@ -165,7 +165,7 @@ class StudyRoomControllerTest {
 
         Long studyRoomId = 1L;
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/studyrooms/" + studyRoomId + "/next-step")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/studyrooms/" + studyRoomId + "/next-step")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +

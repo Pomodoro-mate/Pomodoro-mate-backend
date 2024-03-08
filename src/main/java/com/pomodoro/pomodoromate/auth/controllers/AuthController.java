@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인증 API")
 @RestController
+@RequestMapping("api")
 public class AuthController {
     private final GuestLoginService guestLoginService;
     private final IssueTokenService issueTokenService;

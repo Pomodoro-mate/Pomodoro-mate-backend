@@ -31,7 +31,7 @@ import java.net.URI;
 
 @Tag(name = "스터디룸 API")
 @RestController
-@RequestMapping("studyrooms")
+@RequestMapping("api/studyrooms")
 public class StudyRoomController {
     private final CreateStudyRoomService createStudyRoomService;
     private final GetStudyRoomsService getStudyRoomsService;

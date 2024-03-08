@@ -40,7 +40,7 @@ class AuthControllerTest {
         given(guestLoginService.login(any()))
                 .willReturn(TokenDto.fake());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/guest")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"nickname\": \"닉네임_닉네임\"" +
@@ -53,7 +53,7 @@ class AuthControllerTest {
 
     @Test
     void guestLoginWithInvalidNickname() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/guest")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"nickname\": \"!!!\"" +
@@ -63,7 +63,7 @@ class AuthControllerTest {
 
     @Test
     void guestLoginWithInvalidNameUnder3() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/guest")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"nickname\": \"닉\"" +
@@ -73,7 +73,7 @@ class AuthControllerTest {
 
     @Test
     void guestLoginWithInvalidNameOver16() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/guest")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/guest")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"nickname\": \"" + "닉".repeat(17) +"\"" +
@@ -89,7 +89,7 @@ class AuthControllerTest {
         given(issueTokenService.reissue(token))
                 .willReturn(TokenDto.fake());
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/token")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/token")
                         .cookie(cookie))
                 .andExpect(status().isCreated())
                 .andExpect(content().string(

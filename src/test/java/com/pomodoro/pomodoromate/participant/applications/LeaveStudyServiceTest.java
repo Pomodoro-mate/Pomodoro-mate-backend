@@ -7,6 +7,7 @@ import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotFoundExcep
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
+import com.pomodoro.pomodoromate.studyRoom.applications.CompleteStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
@@ -32,6 +33,7 @@ class LeaveStudyServiceTest {
     private ParticipantRepository participantRepository;
     private UserRepository userRepository;
     private StudyRoomRepository studyRoomRepository;
+    private CompleteStudyRoomService completeStudyRoomService;
     private LeaveStudyService leaveStudyService;
 
     @BeforeEach
@@ -39,11 +41,12 @@ class LeaveStudyServiceTest {
         participantRepository = mock(ParticipantRepository.class);
         userRepository = mock(UserRepository.class);
         studyRoomRepository = mock(StudyRoomRepository.class);
+        completeStudyRoomService = mock(CompleteStudyRoomService.class);
         leaveStudyService = new LeaveStudyService(
                 participantRepository,
                 userRepository,
-                studyRoomRepository
-        );
+                studyRoomRepository,
+                completeStudyRoomService);
     }
 
     @Nested

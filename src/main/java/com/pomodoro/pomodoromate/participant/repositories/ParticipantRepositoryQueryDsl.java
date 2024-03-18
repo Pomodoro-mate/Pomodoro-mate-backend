@@ -6,7 +6,7 @@ import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import java.util.List;
 
 public interface ParticipantRepositoryQueryDsl {
-    Long countActiveByStudyRoomId(StudyRoomId studyRoomId);
+    Long countActiveBy(StudyRoomId studyRoomId);
 
-    List<Participant> findAllActiveByStudyRoomId(StudyRoomId id);
+    List<Participant> findAllActiveBy(StudyRoomId id);
 }

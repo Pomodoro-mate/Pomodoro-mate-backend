@@ -18,7 +18,7 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
     }
 
     @Override
-    public Long countActiveByStudyRoomId(StudyRoomId studyRoomId) {
+    public Long countActiveBy(StudyRoomId studyRoomId) {
         QParticipant participant = QParticipant.participant;
 
         return queryFactory
@@ -30,7 +30,7 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
     }
 
     @Override
-    public List<Participant> findAllActiveByStudyRoomId(StudyRoomId studyRoomId) {
+    public List<Participant> findAllActiveBy(StudyRoomId studyRoomId) {
         QParticipant participant = QParticipant.participant;
 
         return queryFactory

@@ -3,8 +3,10 @@ package com.pomodoro.pomodoromate.participant.applications;
 import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
+import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
@@ -48,6 +50,7 @@ class ParticipateServiceTest {
 
         StudyRoom studyRoom = StudyRoom.builder()
                 .id(1L)
+                .maxParticipantCount(MaxParticipantCount.of(8))
                 .build();
 
         Participant participant = Participant.builder()
@@ -61,6 +64,9 @@ class ParticipateServiceTest {
 
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
+
+        given(participantRepository.countActiveByStudyRoomId(studyRoom.id()))
+                .willReturn(1L);
 
         given(participantRepository.save(any()))
                 .willReturn(participant);
@@ -125,7 +131,34 @@ class ParticipateServiceTest {
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
+        given(participantRepository.countActiveByStudyRoomId(studyRoom.id()))
+                .willReturn(1L);
+
         assertThrows(StudyAlreadyCompletedException.class,
+                () -> participateService.participate(user.id(), studyRoom.id()));
+    }
+
+    @Test
+    void participateWithMaxParticipantsExceededException() {
+        User user = User.builder()
+                .id(1L)
+                .build();
+
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(1L)
+                .maxParticipantCount(MaxParticipantCount.of(8))
+                .build();
+
+        given(userRepository.findById(user.id().value()))
+                .willReturn(Optional.of(user));
+
+        given(studyRoomRepository.findById(studyRoom.id().value()))
+                .willReturn(Optional.of(studyRoom));
+
+        given(participantRepository.countActiveByStudyRoomId(studyRoom.id()))
+                .willReturn(studyRoom.maxParticipantCount().longValue());
+
+        assertThrows(MaxParticipantExceededException.class,
                 () -> participateService.participate(user.id(), studyRoom.id()));
     }
 }

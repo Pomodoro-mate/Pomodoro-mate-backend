@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import org.junit.jupiter.api.Test;
 
@@ -53,5 +54,31 @@ class StudyRoomTest {
         studyRoom.proceedToNextStep();
 
         assertThat(studyRoom.step()).isEqualTo(Step.RETROSPECT);
+    }
+
+    @Test
+    void validateMaxParticipantExceeded_NotExceeded() {
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(1L)
+                .maxParticipantCount(MaxParticipantCount.of(5))
+                .build();
+
+        Long participantCount = 1L;
+
+        assertDoesNotThrow(
+                () -> studyRoom.validateMaxParticipantExceeded(participantCount));
+    }
+
+    @Test
+    void validateMaxParticipantExceeded_Exceeded() {
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(1L)
+                .maxParticipantCount(MaxParticipantCount.of(5))
+                .build();
+
+        Long participantCount = 6L;
+
+        assertThrows(MaxParticipantExceededException.class,
+                () -> studyRoom.validateMaxParticipantExceeded(participantCount));
     }
 }

@@ -2,6 +2,7 @@ package com.pomodoro.pomodoromate.studyRoom.applications;
 
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
+import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
@@ -33,6 +34,7 @@ public class CreateStudyRoomService {
 
         StudyRoom studyRoom = StudyRoom.builder()
                 .info(request.getInfo())
+                .maxParticipantCount(MaxParticipantCount.of(8))
                 .build();
 
 //        if (request.getStatus().equals(StudyRoomStatus.PASSWORD_PROTECTED)) {

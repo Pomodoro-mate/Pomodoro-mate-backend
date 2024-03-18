@@ -4,6 +4,7 @@ import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -11,11 +12,14 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyRoom extends BaseEntity {
     @Id
     @GeneratedValue
@@ -24,28 +28,24 @@ public class StudyRoom extends BaseEntity {
     @Embedded
     private StudyRoomInfo info;
 
-//    @Enumerated
 //    @Column(name = "hostId")
 //    private UserId hostId;
 
-//    @Enumerated(EnumType.STRING)
-//    private StudyRoomStatus status;
-//
-//    @Enumerated
 //    private StudyRoomPassword password;
+
+    @Embedded
+    private MaxParticipantCount maxParticipantCount;
 
     @Enumerated(EnumType.STRING)
     private Step step;
 
-    public StudyRoom() {
-    }
-
     @Builder
-    public StudyRoom(Long id, StudyRoomInfo info) {
+    public StudyRoom(Long id, StudyRoomInfo info, MaxParticipantCount maxParticipantCount) {
         this.id = id;
         this.info = info;
 //        this.hostId = hostId;
 //        this.status = status;
+        this.maxParticipantCount = maxParticipantCount;
 
         this.step = Step.PLANNING;
     }
@@ -65,32 +65,8 @@ public class StudyRoom extends BaseEntity {
 //        if (!passwordEncoder.matches(password.getValue(), this.password.getValue())) {
 //            throw new IncorrectStudyRoomPasswordException();
 //        }
+
 //    }
-
-    public StudyRoomId id() {
-        return StudyRoomId.of(id);
-    }
-
-    public StudyRoomInfo info() {
-        return info;
-    }
-
-//    public UserId hostId() {
-//        return hostId;
-//    }
-
-//    public StudyRoomPassword password() {
-//        return password;
-//    }
-
-    public Step step() {
-        return step;
-    }
-
-    public StudyRoomDetailDto toDetailDto(List<ParticipantSummaryDto> participantSummaryDtos) {
-        return new StudyRoomDetailDto(id, info().name(), info.intro(),
-                step.toString(), participantSummaryDtos, updateAt());
-    }
 
     public void validateIncomplete() {
         if (isStep(Step.COMPLETED)) {
@@ -114,5 +90,44 @@ public class StudyRoom extends BaseEntity {
 
     public void proceedToNextStep() {
         this.step = step.nextStep();
+    }
+
+    public void validateMaxParticipantExceeded(Long participantCount) {
+        if (isMaxParticipantExceeded(participantCount)) {
+            throw new MaxParticipantExceededException();
+        }
+    }
+
+    private boolean isMaxParticipantExceeded(Long participantCount) {
+        return participantCount >= maxParticipantCount.value();
+    }
+
+    public StudyRoomId id() {
+        return StudyRoomId.of(id);
+    }
+
+    public StudyRoomInfo info() {
+        return info;
+    }
+//    public UserId hostId() {
+//        return hostId;
+
+//    }
+//    public StudyRoomPassword password() {
+//        return password;
+
+//    }
+
+    public Step step() {
+        return step;
+    }
+
+    public StudyRoomDetailDto toDetailDto(List<ParticipantSummaryDto> participantSummaryDtos) {
+        return new StudyRoomDetailDto(id, info().name(), info.intro(),
+                step.toString(), participantSummaryDtos, updateAt());
+    }
+
+    public Integer maxParticipantCount() {
+        return maxParticipantCount.value();
     }
 }

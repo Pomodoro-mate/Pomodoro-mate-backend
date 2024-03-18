@@ -37,7 +37,7 @@ public class ParticipateService {
 
         studyRoom.validateIncomplete();
 
-        Long participantCount = participantRepository.countActiveByStudyRoomId(studyRoomId);
+        Long participantCount = participantRepository.countActiveBy(studyRoomId);
 
         studyRoom.validateMaxParticipantExceeded(participantCount);
 

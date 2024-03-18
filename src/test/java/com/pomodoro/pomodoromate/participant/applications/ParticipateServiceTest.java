@@ -65,7 +65,7 @@ class ParticipateServiceTest {
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
-        given(participantRepository.countActiveByStudyRoomId(studyRoom.id()))
+        given(participantRepository.countActiveBy(studyRoom.id()))
                 .willReturn(1L);
 
         given(participantRepository.save(any()))
@@ -131,7 +131,7 @@ class ParticipateServiceTest {
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
-        given(participantRepository.countActiveByStudyRoomId(studyRoom.id()))
+        given(participantRepository.countActiveBy(studyRoom.id()))
                 .willReturn(1L);
 
         assertThrows(StudyAlreadyCompletedException.class,
@@ -155,7 +155,7 @@ class ParticipateServiceTest {
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
-        given(participantRepository.countActiveByStudyRoomId(studyRoom.id()))
+        given(participantRepository.countActiveBy(studyRoom.id()))
                 .willReturn(studyRoom.maxParticipantCount().longValue());
 
         assertThrows(MaxParticipantExceededException.class,

@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
@@ -12,18 +13,28 @@ import com.pomodoro.pomodoromate.user.models.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+@SpringBootTest
 class StudyProgressServiceTest {
     private ValidateUserService validateUserService;
     private StudyRoomRepository studyRoomRepository;
     private StudyProgressService studyProgressService;
+
+    @SpyBean
+    private SimpMessagingTemplate messagingTemplate;
 
     @BeforeEach
     void setUp() {
@@ -31,8 +42,8 @@ class StudyProgressServiceTest {
         studyRoomRepository = mock(StudyRoomRepository.class);
         studyProgressService = new StudyProgressService(
                 validateUserService,
-                studyRoomRepository
-        );
+                studyRoomRepository,
+                messagingTemplate);
     }
 
     @Test
@@ -51,6 +62,11 @@ class StudyProgressServiceTest {
                 .proceedToNextStep(userId, studyRoom.id(), Step.PLANNING));
 
         assertThat(studyRoom.step()).isEqualTo(Step.STUDYING);
+
+        verify(messagingTemplate).convertAndSend(
+                eq("/sub/studyrooms/" + studyRoom.id().value() + "/next-step"),
+                any(NextStepStudyRoomDto.class)
+        );
     }
 
     @Test

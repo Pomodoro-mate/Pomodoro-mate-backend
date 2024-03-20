@@ -2,6 +2,7 @@ package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
+import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
@@ -129,5 +130,9 @@ public class StudyRoom extends BaseEntity {
 
     public Integer maxParticipantCount() {
         return maxParticipantCount.value();
+    }
+
+    public NextStepStudyRoomDto toNextStepDto() {
+        return new NextStepStudyRoomDto(id, step.toString(), updateAt());
     }
 }

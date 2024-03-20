@@ -156,21 +156,4 @@ class StudyRoomControllerTest {
                         "\"id\":1"
                 )));
     }
-
-    @Test
-    void proceedToNextStep() throws Exception {
-        UserId userId = new UserId(1L);
-
-        String token = jwtUtil.encode(userId);
-
-        Long studyRoomId = 1L;
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/studyrooms/" + studyRoomId + "/next-step")
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "   \"step\": \"PLANNING\"" +
-                                "}"))
-                .andExpect(status().isNoContent());
-    }
 }

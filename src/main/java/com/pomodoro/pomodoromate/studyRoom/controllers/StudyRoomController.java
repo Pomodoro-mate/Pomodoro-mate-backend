@@ -16,11 +16,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,16 +90,15 @@ public class StudyRoomController {
     }
 
     @Operation(summary = "다음 스터디 단계 진행")
-    @ApiResponse(responseCode = "204")
-    @PutMapping("{studyRoomId}/next-step")
-    public ResponseEntity<Void> proceedToNextStep(
-            @RequestAttribute UserId userId,
-            @PathVariable Long studyRoomId,
-            @Validated @RequestBody StudyProgressRequestDto requestDto
+    @MessageMapping("{studyRoomId}/next-step")
+    public void proceedToNextStep(
+            @DestinationVariable Long studyRoomId,
+            @Payload StudyProgressRequestDto requestDto,
+            SimpMessageHeaderAccessor headerAccessor
     ) {
+        UserId userId = (UserId) headerAccessor.getSessionAttributes().get("UserId");
+
         studyProgressService.proceedToNextStep(
                 userId, StudyRoomId.of(studyRoomId), Step.valueOf(requestDto.step()));
-
-        return ResponseEntity.noContent().build();
     }
 }

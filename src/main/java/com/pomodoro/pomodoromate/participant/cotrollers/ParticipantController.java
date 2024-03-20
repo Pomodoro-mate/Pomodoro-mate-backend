@@ -2,11 +2,13 @@ package com.pomodoro.pomodoromate.participant.cotrollers;
 
 import com.pomodoro.pomodoromate.participant.applications.LeaveStudyService;
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipateResponseDto;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,14 +33,14 @@ public class ParticipantController {
     @Operation(summary = "스터디 참가")
     @ApiResponse(responseCode = "201")
     @PostMapping("studyrooms/{studyRoomId}/participants")
-    public ResponseEntity<Void> participate(
+    public ResponseEntity<ParticipateResponseDto> participate(
             @RequestAttribute UserId userId,
             @PathVariable Long studyRoomId
     ) {
         Long participantId = participateService.participate(userId, StudyRoomId.of(studyRoomId));
 
-        return ResponseEntity.created(
-                URI.create("/studyrooms/" + studyRoomId + "/participants/" + participantId)).build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ParticipateResponseDto(participantId));
     }
 
     @Operation(summary = "스터디 나가기")

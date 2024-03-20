@@ -6,6 +6,7 @@ import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
 import com.pomodoro.pomodoromate.studyRoom.applications.StudyProgressService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequestDto;
+import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomResponseDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyProgressRequestDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
@@ -15,10 +16,9 @@ import com.pomodoro.pomodoromate.user.models.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 @Tag(name = "스터디룸 API")
 @RestController
@@ -78,7 +76,7 @@ public class StudyRoomController {
     @Operation(summary = "스터디룸 생성")
     @ApiResponse(responseCode = "201")
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<CreateStudyRoomResponseDto> create(
             @RequestAttribute UserId userId,
             @Validated @RequestBody CreateStudyRoomRequestDto requestDto
     ) {
@@ -86,7 +84,8 @@ public class StudyRoomController {
 
         Long studyRoomId = createStudyRoomService.create(request, userId);
 
-        return ResponseEntity.created(URI.create("/studyrooms/" + studyRoomId)).build();
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new CreateStudyRoomResponseDto(studyRoomId));
     }
 
     @Operation(summary = "다음 스터디 단계 진행")

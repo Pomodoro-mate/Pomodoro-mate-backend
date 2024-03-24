@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "스터디룸 API")
 @RestController
-@RequestMapping("api/studyrooms")
 public class StudyRoomController {
     private final CreateStudyRoomService createStudyRoomService;
     private final GetStudyRoomsService getStudyRoomsService;
@@ -52,7 +51,7 @@ public class StudyRoomController {
     }
 
     @Operation(summary = "스터디룸 목록 조회")
-    @GetMapping
+    @GetMapping("api/studyrooms")
     public ResponseEntity<StudyRoomSummariesDto> studyRooms(
             @RequestAttribute UserId userId,
             @RequestParam(required = false, defaultValue = "1") Integer page
@@ -63,7 +62,7 @@ public class StudyRoomController {
     }
 
     @Operation(summary = "스터디룸 조회")
-    @GetMapping("{studyRoomId}")
+    @GetMapping("api/studyrooms/{studyRoomId}")
     public ResponseEntity<StudyRoomDetailDto> studyRoom(
             @RequestAttribute UserId userId,
             @PathVariable Long studyRoomId
@@ -75,7 +74,7 @@ public class StudyRoomController {
 
     @Operation(summary = "스터디룸 생성")
     @ApiResponse(responseCode = "201")
-    @PostMapping
+    @PostMapping("api/studyrooms")
     public ResponseEntity<CreateStudyRoomResponseDto> create(
             @RequestAttribute UserId userId,
             @Validated @RequestBody CreateStudyRoomRequestDto requestDto
@@ -89,7 +88,7 @@ public class StudyRoomController {
     }
 
     @Operation(summary = "다음 스터디 단계 진행")
-    @MessageMapping("{studyRoomId}/next-step")
+    @MessageMapping("studyrooms/{studyRoomId}/next-step")
     public void proceedToNextStep(
             @DestinationVariable Long studyRoomId,
             @Payload StudyProgressRequestDto requestDto,

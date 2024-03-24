@@ -13,7 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${allow-origin}")
-    private String allowOrigin;
+    private String[] allowOrigins;
 
     private final WebSocketHandler webSocketHandler;
 
@@ -24,7 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/study")
-                .setAllowedOrigins(allowOrigin)
+                .setAllowedOrigins(allowOrigins)
                 .withSockJS();
     }
 

@@ -13,6 +13,8 @@ import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class ParticipateService {
     private final ParticipantRepository participantRepository;
@@ -40,6 +42,12 @@ public class ParticipateService {
         Long participantCount = participantRepository.countActiveBy(studyRoomId);
 
         studyRoom.validateMaxParticipantExceeded(participantCount);
+
+        Optional<Participant> existingParticipant = participantRepository.findBy(userId, studyRoomId);
+
+        if (existingParticipant.isPresent()) {
+            return existingParticipant.get().id().value();
+        }
 
         Participant participant = Participant.builder()
                 .studyRoomId(studyRoom.id())

@@ -4,10 +4,12 @@ import com.pomodoro.pomodoromate.common.models.Status;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.QParticipant;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
+import com.pomodoro.pomodoromate.user.models.UserId;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
@@ -39,5 +41,16 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
                 .where(participant.studyRoomId.eq(studyRoomId).and(
                         participant.status.eq(Status.ACTIVE)))
                 .fetch();
+    }
+
+    @Override
+    public Optional<Participant> findBy(UserId userId, StudyRoomId studyRoomId) {
+        QParticipant participant = QParticipant.participant;
+
+        return Optional.ofNullable(queryFactory
+                .selectFrom(participant)
+                .where(participant.studyRoomId.eq(studyRoomId).and(
+                        participant.userId.eq(userId)))
+                .fetchOne());
     }
 }

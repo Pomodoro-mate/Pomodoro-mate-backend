@@ -103,7 +103,7 @@ public class WebSocketHandler implements ChannelInterceptor {
         String sessionId = accessor.getSessionId();
         log.info("sessionId: " + sessionId);
 
-        Participant participant = participantRepository.findBySessionId(sessionId)
+        Participant participant = participantRepository.findBySessionId(SessionId.of(sessionId))
                 .orElseThrow(ParticipantNotFoundException::new);
 
         participant.delete();

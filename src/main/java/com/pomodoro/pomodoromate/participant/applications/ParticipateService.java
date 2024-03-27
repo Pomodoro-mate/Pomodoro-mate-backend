@@ -46,6 +46,8 @@ public class ParticipateService {
         Optional<Participant> existingParticipant = participantRepository.findBy(userId, studyRoomId);
 
         if (existingParticipant.isPresent()) {
+            existingParticipant.get().activate();
+
             return existingParticipant.get().id().value();
         }
 

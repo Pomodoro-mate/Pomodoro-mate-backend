@@ -16,6 +16,7 @@ import com.pomodoro.pomodoromate.user.models.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -88,7 +88,7 @@ public class StudyRoomController {
     }
 
     @Operation(summary = "다음 스터디 단계 진행")
-    @MessageMapping("studyrooms/{studyRoomId}/next-step")
+    @MessageMapping("/studyrooms/{studyRoomId}/next-step")
     public void proceedToNextStep(
             @DestinationVariable Long studyRoomId,
             @Payload StudyProgressRequestDto requestDto,

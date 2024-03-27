@@ -68,12 +68,6 @@ public class ParticipantController {
     ) {
         leaveStudyService.leaveStudy(userId, StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
 
-        ParticipantSummariesDto participantSummariesDto = getParticipantsService
-                .activeParticipants(StudyRoomId.of(studyRoomId));
-
-        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
-                , participantSummariesDto);
-
         return ResponseEntity.noContent().build();
     }
 }

@@ -74,6 +74,10 @@ public class Participant extends BaseEntity {
         return status;
     }
 
+    public SessionId sessionId() {
+        return sessionId;
+    }
+
     public void validateParticipant(UserId userId) {
         if (!this.userId.equals(userId)) {
             throw new AuthorizationException();
@@ -97,6 +101,10 @@ public class Participant extends BaseEntity {
 
     public void activate(SessionId sessionId) {
         this.sessionId = sessionId;
+        this.status = Status.ACTIVE;
+    }
+
+    public void activate() {
         this.status = Status.ACTIVE;
     }
 }

@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.participant.repositories;
 
+import com.pomodoro.pomodoromate.common.models.SessionId;
 import com.pomodoro.pomodoromate.common.models.Status;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.QParticipant;
@@ -51,6 +52,16 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
                 .selectFrom(participant)
                 .where(participant.studyRoomId.eq(studyRoomId).and(
                         participant.userId.eq(userId)))
+                .fetchOne());
+    }
+
+    @Override
+    public Optional<Participant> findBy(SessionId sessionId) {
+        QParticipant participant = QParticipant.participant;
+
+        return Optional.ofNullable(queryFactory
+                .selectFrom(participant)
+                .where(participant.sessionId.eq(sessionId))
                 .fetchOne());
     }
 }

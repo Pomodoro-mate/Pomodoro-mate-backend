@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.participant.repositories;
 
+import com.pomodoro.pomodoromate.common.models.SessionId;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
@@ -13,4 +14,6 @@ public interface ParticipantRepositoryQueryDsl {
     List<Participant> findAllActiveBy(StudyRoomId id);
 
     Optional<Participant> findBy(UserId userId, StudyRoomId studyRoomId);
+
+    Optional<Participant> findBy(SessionId sessionId);
 }

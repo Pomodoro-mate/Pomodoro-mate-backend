@@ -1,6 +1,5 @@
 package com.pomodoro.pomodoromate.user.models;
 
-import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
 import com.pomodoro.pomodoromate.user.exceptions.InvalidUserNicknameException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -36,10 +35,6 @@ public class UserInfo {
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.intro = intro; //TODO 예외처리
-    }
-
-    public static StudyRoomInfo of(String name, String intro) {
-        return new StudyRoomInfo(name, intro);
     }
 
     private void validateNickName(String nickname) {

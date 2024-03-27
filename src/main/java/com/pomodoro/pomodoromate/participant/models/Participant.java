@@ -5,6 +5,7 @@ import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.common.models.SessionId;
 import com.pomodoro.pomodoromate.common.models.Status;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
+import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
@@ -106,5 +107,15 @@ public class Participant extends BaseEntity {
 
     public void activate() {
         this.status = Status.ACTIVE;
+    }
+
+    public void validateActive() {
+        if (!isActive()) {
+            throw new ParticipantNotInRoomException();
+        }
+    }
+
+    private boolean isActive() {
+        return this.status.equals(Status.ACTIVE);
     }
 }

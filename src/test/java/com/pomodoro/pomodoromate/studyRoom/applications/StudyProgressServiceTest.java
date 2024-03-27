@@ -1,5 +1,8 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
+import com.pomodoro.pomodoromate.participant.models.Participant;
+import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
@@ -32,6 +35,7 @@ class StudyProgressServiceTest {
     private ValidateUserService validateUserService;
     private StudyRoomRepository studyRoomRepository;
     private StudyProgressService studyProgressService;
+    private ParticipantRepository participantRepository;
 
     @SpyBean
     private SimpMessagingTemplate messagingTemplate;
@@ -40,9 +44,11 @@ class StudyProgressServiceTest {
     void setUp() {
         validateUserService = mock(ValidateUserService.class);
         studyRoomRepository = mock(StudyRoomRepository.class);
+        participantRepository = mock(ParticipantRepository.class);
         studyProgressService = new StudyProgressService(
                 validateUserService,
                 studyRoomRepository,
+                participantRepository,
                 messagingTemplate);
     }
 
@@ -55,8 +61,17 @@ class StudyProgressServiceTest {
                 .id(10L)
                 .build();
 
+        Participant participant = Participant.builder()
+                .id(1L)
+                .studyRoomId(studyRoom.id())
+                .userId(userId)
+                .build();
+
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
+
+        given(participantRepository.findBy(userId, studyRoom.id()))
+                .willReturn(Optional.of(participant));
 
         assertDoesNotThrow(() -> studyProgressService
                 .proceedToNextStep(userId, studyRoom.id(), Step.PLANNING));
@@ -99,8 +114,17 @@ class StudyProgressServiceTest {
                 .build();
         studyRoom.complete();
 
+        Participant participant = Participant.builder()
+                .id(1L)
+                .studyRoomId(studyRoom.id())
+                .userId(userId)
+                .build();
+
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
+
+        given(participantRepository.findBy(userId, studyRoom.id()))
+                .willReturn(Optional.of(participant));
 
         assertThrows(StudyAlreadyCompletedException.class,
                 () -> studyProgressService.proceedToNextStep(userId, studyRoom.id(), Step.COMPLETED));
@@ -117,10 +141,46 @@ class StudyProgressServiceTest {
                 .id(10L)
                 .build();
 
+        Participant participant = Participant.builder()
+                .id(1L)
+                .studyRoomId(studyRoom.id())
+                .userId(userId)
+                .build();
+
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
+        given(participantRepository.findBy(userId, studyRoom.id()))
+                .willReturn(Optional.of(participant));
+
         assertThrows(InvalidStepException.class,
+                () -> studyProgressService.proceedToNextStep(userId, studyRoom.id(), Step.RETROSPECT));
+
+        assertThat(studyRoom.step()).isEqualTo(Step.PLANNING);
+    }
+
+    @DisplayName("요청한 참가자가 현재 채팅방에 참여중이지 않은 경우")
+    void proceedToNextStepFailedWithParticipantNotInRoomException() {
+        UserId userId = UserId.of(1L);
+
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(10L)
+                .build();
+
+        Participant participant = Participant.builder()
+                .id(1L)
+                .studyRoomId(studyRoom.id())
+                .userId(userId)
+                .build();
+        participant.delete();
+
+        given(studyRoomRepository.findById(studyRoom.id().value()))
+                .willReturn(Optional.of(studyRoom));
+
+        given(participantRepository.findBy(userId, studyRoom.id()))
+                .willReturn(Optional.of(participant));
+
+        assertThrows(ParticipantNotInRoomException.class,
                 () -> studyProgressService.proceedToNextStep(userId, studyRoom.id(), Step.RETROSPECT));
 
         assertThat(studyRoom.step()).isEqualTo(Step.PLANNING);

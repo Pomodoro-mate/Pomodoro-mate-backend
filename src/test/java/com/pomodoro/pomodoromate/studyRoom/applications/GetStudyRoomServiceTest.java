@@ -6,6 +6,7 @@ import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
+import com.pomodoro.pomodoromate.studyRoom.models.TimeSet;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.User;
@@ -49,6 +50,7 @@ class GetStudyRoomServiceTest {
         StudyRoom studyRoom = StudyRoom.builder()
                 .id(studyRoomId)
                 .info(new StudyRoomInfo("스터디방 1", "설명"))
+                .timeSet(new TimeSet(5, 10, 5, 5))
                 .build();
 
         Participant participant = Participant.builder()

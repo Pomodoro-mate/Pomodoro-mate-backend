@@ -65,12 +65,19 @@ class StudyRoomControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"스터디\", " +
-                                "   \"intro\": \"공부할 사람 구해요\"" +
+                                "   \"intro\": \"공부할 사람 구해요\", " +
 //                                "   \"isPrivate\": \"false\", " +
 //                                "   \"password\": \"\"" +
+                                "   \"timeSet\": {" +
+                                "       \"planningTime\": \"5\", " +
+                                "       \"studyingTime\": \"10\", " +
+                                "       \"retrospectTime\": \"5\", " +
+                                "       \"restingTime\": \"5\"" +
+                                "    }" +
                                 "}"))
                 .andExpect(status().isCreated());
     }
+
 
     @Test
     void createStudyRoomWithBlankName() throws Exception {
@@ -78,9 +85,15 @@ class StudyRoomControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"\", " +
-                                "   \"intro\": \"공부할 사람 구해요\"" +
+                                "   \"intro\": \"공부할 사람 구해요\", " +
 //                                "   \"isPrivate\": \"false\", " +
 //                                "   \"password\": \"\"" +
+                                "   \"timeSet\": {" +
+                                "       \"planningTime\": \"5\", " +
+                                "       \"studyingTime\": \"10\", " +
+                                "       \"retrospectTime\": \"5\", " +
+                                "       \"restingTime\": \"5\"" +
+                                "    }" +
                                 "}"))
                 .andExpect(status().isBadRequest());
     }
@@ -91,9 +104,15 @@ class StudyRoomControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"스\", " +
-                                "   \"intro\": \"공부할 사람 구해요\"" +
+                                "   \"intro\": \"공부할 사람 구해요\", " +
 //                                "   \"isPrivate\": \"false\", " +
 //                                "   \"password\": \"\"" +
+                                "   \"timeSet\": {" +
+                                "       \"planningTime\": \"5\", " +
+                                "       \"studyingTime\": \"10\", " +
+                                "       \"retrospectTime\": \"5\", " +
+                                "       \"restingTime\": \"5\"" +
+                                "    }" +
                                 "}"))
                 .andExpect(status().isBadRequest());
     }
@@ -104,9 +123,15 @@ class StudyRoomControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
                                 "   \"name\": \"" + "스".repeat(31) + "\", " +
-                                "   \"intro\": \"공부할 사람 구해요\"" +
+                                "   \"intro\": \"공부할 사람 구해요\", " +
 //                                "   \"isPrivate\": \"false\", " +
 //                                "   \"password\": \"\"" +
+                                "   \"timeSet\": {" +
+                                "       \"planningTime\": \"5\", " +
+                                "       \"studyingTime\": \"10\", " +
+                                "       \"retrospectTime\": \"5\", " +
+                                "       \"restingTime\": \"5\"" +
+                                "    }" +
                                 "}"))
                 .andExpect(status().isBadRequest());
     }

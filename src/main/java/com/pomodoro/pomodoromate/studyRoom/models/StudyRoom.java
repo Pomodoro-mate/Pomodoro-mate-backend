@@ -37,18 +37,22 @@ public class StudyRoom extends BaseEntity {
     @Embedded
     private MaxParticipantCount maxParticipantCount;
 
+    @Embedded
+    private TimeSet timeSet;
+
     @Enumerated(EnumType.STRING)
     private Step step;
 
     @Builder
-    public StudyRoom(Long id, StudyRoomInfo info, MaxParticipantCount maxParticipantCount) {
+    public StudyRoom(Long id, StudyRoomInfo info, MaxParticipantCount maxParticipantCount, TimeSet timeSet) {
         this.id = id;
         this.info = info;
 //        this.hostId = hostId;
 //        this.status = status;
         this.maxParticipantCount = maxParticipantCount;
+        this.timeSet = timeSet;
 
-        this.step = Step.PLANNING;
+        this.step = Step.WAITING;
     }
 
 //    public void changePassword(StudyRoomPassword password, PasswordEncoder passwordEncoder) {
@@ -91,6 +95,10 @@ public class StudyRoom extends BaseEntity {
 
     public void proceedToNextStep() {
         this.step = step.nextStep();
+
+        if (timeSet.isTimeZero(step)) {
+            proceedToNextStep();
+        }
     }
 
     public void validateMaxParticipantExceeded(Long participantCount) {
@@ -123,9 +131,13 @@ public class StudyRoom extends BaseEntity {
         return step;
     }
 
+    public TimeSet timeSet() {
+        return timeSet;
+    }
+
     public StudyRoomDetailDto toDetailDto(List<ParticipantSummaryDto> participantSummaryDtos) {
         return new StudyRoomDetailDto(id, info().name(), info.intro(),
-                step.toString(), participantSummaryDtos, updateAt());
+                step.toString(), timeSet.toDto(), participantSummaryDtos, updateAt());
     }
 
     public Integer maxParticipantCount() {
@@ -133,6 +145,6 @@ public class StudyRoom extends BaseEntity {
     }
 
     public NextStepStudyRoomDto toNextStepDto() {
-        return new NextStepStudyRoomDto(id, step.toString(), updateAt());
+        return new NextStepStudyRoomDto(id, step.toString(), timeSet.getTimeOf(step), updateAt());
     }
 }

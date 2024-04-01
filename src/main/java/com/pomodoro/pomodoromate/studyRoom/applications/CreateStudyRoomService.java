@@ -35,6 +35,7 @@ public class CreateStudyRoomService {
         StudyRoom studyRoom = StudyRoom.builder()
                 .info(request.getInfo())
                 .maxParticipantCount(MaxParticipantCount.of(8))
+                .timeSet(request.getTimeSet())
                 .build();
 
 //        if (request.getStatus().equals(StudyRoomStatus.PASSWORD_PROTECTED)) {

@@ -36,7 +36,7 @@ class StudyRoomTest {
                 .id(1L)
                 .build();
 
-        assertDoesNotThrow(() -> studyRoom.validateCurrentStep(Step.PLANNING));
+        assertDoesNotThrow(() -> studyRoom.validateCurrentStep(Step.WAITING));
 
         assertThrows(InvalidStepException.class,
                 () -> studyRoom.validateCurrentStep(Step.STUDYING));
@@ -46,6 +46,22 @@ class StudyRoomTest {
     void proceedToNextStep() {
         StudyRoom studyRoom = StudyRoom.builder()
                 .id(1L)
+                .timeSet(new TimeSet(5, 10, 5, 5))
+                .build();
+        studyRoom.proceedToNextStep();
+
+        assertThat(studyRoom.step()).isEqualTo(Step.PLANNING);
+
+        studyRoom.proceedToNextStep();
+
+        assertThat(studyRoom.step()).isEqualTo(Step.STUDYING);
+    }
+
+    @Test
+    void proceedToNextStep_nextStepTimeIsZero() {
+        StudyRoom studyRoom = StudyRoom.builder()
+                .id(1L)
+                .timeSet(new TimeSet(0, 10, 5, 5))
                 .build();
         studyRoom.proceedToNextStep();
 

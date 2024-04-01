@@ -10,6 +10,7 @@ import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException
 import com.pomodoro.pomodoromate.studyRoom.models.Step;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
+import com.pomodoro.pomodoromate.studyRoom.models.TimeSet;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.UserId;
@@ -58,7 +59,8 @@ class StudyProgressServiceTest {
         UserId userId = UserId.of(1L);
 
         StudyRoom studyRoom = StudyRoom.builder()
-                .id(10L)
+                .id(1L)
+                .timeSet(new TimeSet(5, 10, 5, 5))
                 .build();
 
         Participant participant = Participant.builder()
@@ -74,9 +76,9 @@ class StudyProgressServiceTest {
                 .willReturn(Optional.of(participant));
 
         assertDoesNotThrow(() -> studyProgressService
-                .proceedToNextStep(userId, studyRoom.id(), Step.PLANNING));
+                .proceedToNextStep(userId, studyRoom.id(), Step.WAITING));
 
-        assertThat(studyRoom.step()).isEqualTo(Step.STUDYING);
+        assertThat(studyRoom.step()).isEqualTo(Step.PLANNING);
 
         verify(messagingTemplate).convertAndSend(
                 eq("/sub/studyrooms/" + studyRoom.id().value() + "/next-step"),
@@ -101,7 +103,7 @@ class StudyProgressServiceTest {
         assertThrows(StudyRoomNotFoundException.class,
                 () -> studyProgressService.proceedToNextStep(userId, invalidStudyRoomId, Step.PLANNING));
 
-        assertThat(studyRoom.step()).isEqualTo(Step.PLANNING);
+        assertThat(studyRoom.step()).isEqualTo(Step.WAITING);
     }
 
     @Test
@@ -156,7 +158,7 @@ class StudyProgressServiceTest {
         assertThrows(InvalidStepException.class,
                 () -> studyProgressService.proceedToNextStep(userId, studyRoom.id(), Step.RETROSPECT));
 
-        assertThat(studyRoom.step()).isEqualTo(Step.PLANNING);
+        assertThat(studyRoom.step()).isEqualTo(Step.WAITING);
     }
 
     @DisplayName("요청한 참가자가 현재 채팅방에 참여중이지 않은 경우")

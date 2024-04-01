@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
 public enum Step {
+    WAITING,
     PLANNING,
     STUDYING,
     RETROSPECT,
@@ -9,10 +10,10 @@ public enum Step {
 
     public Step nextStep() {
         return switch (this) {
+            case WAITING, RESTING -> PLANNING;
             case PLANNING -> STUDYING;
             case STUDYING -> RETROSPECT;
             case RETROSPECT -> RESTING;
-            case RESTING -> PLANNING;
             default -> COMPLETED;
         };
     }

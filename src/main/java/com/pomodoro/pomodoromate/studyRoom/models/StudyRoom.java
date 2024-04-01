@@ -137,7 +137,7 @@ public class StudyRoom extends BaseEntity {
 
     public StudyRoomDetailDto toDetailDto(List<ParticipantSummaryDto> participantSummaryDtos) {
         return new StudyRoomDetailDto(id, info().name(), info.intro(),
-                step.toString(), participantSummaryDtos, updateAt());
+                step.toString(), timeSet.toDto(), participantSummaryDtos, updateAt());
     }
 
     public Integer maxParticipantCount() {

@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
+import com.pomodoro.pomodoromate.studyRoom.dtos.TimeSetDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidTimeRangeException;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -99,5 +100,10 @@ public class TimeSet {
 
     public Integer restingTime() {
         return restingTime;
+    }
+
+    public TimeSetDto toDto() {
+        return new TimeSetDto(
+                planningTime, studyingTime, retrospectTime, restingTime);
     }
 }

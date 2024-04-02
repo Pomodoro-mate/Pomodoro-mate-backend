@@ -10,8 +10,16 @@ public class JwtConfig {
     @Value("${jwt.secret}")
     private String secret;
 
+    @Value("${access-token.validation-second}")
+    private Long accessTokenValidationSecond;
+
+    @Value("${refresh-token.validation-second}")
+    private Long refreshTokenValidationSecond;
+
     @Bean
     public JwtUtil jwtUtil() {
-        return new JwtUtil(secret);
+        return new JwtUtil(secret,
+                accessTokenValidationSecond,
+                refreshTokenValidationSecond);
     }
 }

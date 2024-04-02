@@ -2,7 +2,9 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches:
+      - main
+      - develop
 
 jobs:
   build-and-push:
@@ -46,8 +48,8 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push - dev
-        uses: docker/build-push-action@v4
         if: contains(github.ref, 'develop')
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile.dev
@@ -55,8 +57,8 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}:dev
 
       - name: Build and push - prod
-          uses: docker/build-push-action@v4
           if: contains(github.ref, 'main')
+          uses: docker/build-push-action@v4
           with:
             context: .
             file: ./Dockerfile

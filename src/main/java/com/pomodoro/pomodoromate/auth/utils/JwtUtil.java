@@ -10,22 +10,21 @@ import com.pomodoro.pomodoromate.auth.exceptions.AccessTokenExpiredException;
 import com.pomodoro.pomodoromate.auth.exceptions.RefreshTokenExpiredException;
 import com.pomodoro.pomodoromate.auth.exceptions.TokenDecodingFailedException;
 import com.pomodoro.pomodoromate.user.models.UserId;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.util.UUID;
 
 public class JwtUtil {
     private final Algorithm algorithm;
+    private final Long accessTokenValidationSecond;
+    private final Long refreshTokenValidationSecond;
 
-    @Value("${access-token.validation-second}")
-    private Long accessTokenValidationSecond;
-
-    @Value("${refresh-token.validation-second}")
-    private Long refreshTokenValidationSecond;
-
-    public JwtUtil(String secret) {
+    public JwtUtil(String secret,
+                   Long accessTokenValidationSecond,
+                   Long refreshTokenValidationSecond) {
         this.algorithm = Algorithm.HMAC256(secret);
+        this.accessTokenValidationSecond = accessTokenValidationSecond;
+        this.refreshTokenValidationSecond = refreshTokenValidationSecond;
     }
 
     public String encode(UserId userId) {

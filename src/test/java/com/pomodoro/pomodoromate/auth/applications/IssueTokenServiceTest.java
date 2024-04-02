@@ -26,7 +26,7 @@ class IssueTokenServiceTest {
 
     @BeforeEach
     void setup() {
-        jwtUtil = new JwtUtil("TEST");
+        jwtUtil = new JwtUtil("TEST", 6000L, 60000L);
         refreshTokenRepository = mock(RefreshTokenRepository.class);
         issueTokenService = new IssueTokenService(refreshTokenRepository, jwtUtil);
     }

@@ -10,14 +10,19 @@ import com.pomodoro.pomodoromate.auth.exceptions.AccessTokenExpiredException;
 import com.pomodoro.pomodoromate.auth.exceptions.RefreshTokenExpiredException;
 import com.pomodoro.pomodoromate.auth.exceptions.TokenDecodingFailedException;
 import com.pomodoro.pomodoromate.user.models.UserId;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.util.UUID;
 
 public class JwtUtil {
     private final Algorithm algorithm;
-    private final Long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60 * 2;
-    private final Long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60 * 24 * 14;
+
+    @Value("${access-token.validation-second}")
+    private Long accessTokenValidationSecond;
+
+    @Value("${refresh-token.validation-second}")
+    private Long refreshTokenValidationSecond;
 
     public JwtUtil(String secret) {
         this.algorithm = Algorithm.HMAC256(secret);
@@ -27,7 +32,7 @@ public class JwtUtil {
         return JWT.create()
                 .withClaim("userId", userId.value())
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDATION_SECOND))
+                .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenValidationSecond))
                 .sign(algorithm);
     }
 
@@ -35,7 +40,7 @@ public class JwtUtil {
         return JWT.create()
                 .withClaim("uuid", uuid.toString())
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDATION_SECOND))
+                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenValidationSecond))
                 .sign(algorithm);
     }
 

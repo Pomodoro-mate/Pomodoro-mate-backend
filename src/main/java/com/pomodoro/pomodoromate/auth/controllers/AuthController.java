@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인증 API")
+@Slf4j
 @RestController
 @RequestMapping("api")
 public class AuthController {
@@ -63,6 +65,7 @@ public class AuthController {
             HttpServletResponse response,
             @CookieValue(value = "refreshToken") String refreshToken
     ) {
+        log.info("refresh:" + refreshToken);
         TokenDto token = issueTokenService.reissue(refreshToken);
 
         ResponseCookie cookie = httpUtil.generateHttpOnlyCookie("refreshToken", token.refreshToken());

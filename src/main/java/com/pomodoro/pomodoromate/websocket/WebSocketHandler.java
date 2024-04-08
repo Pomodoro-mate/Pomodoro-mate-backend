@@ -1,7 +1,9 @@
 package com.pomodoro.pomodoromate.websocket;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.pomodoro.pomodoromate.auth.exceptions.AccessTokenExpiredException;
 import com.pomodoro.pomodoromate.auth.exceptions.AuthenticationError;
+import com.pomodoro.pomodoromate.auth.exceptions.TokenDecodingFailedException;
 import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.common.models.SessionId;
 import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService;
@@ -105,8 +107,10 @@ public class WebSocketHandler implements ChannelInterceptor {
             participantRepository.save(participant);
 
             log.info("[web socket] - preSend 메서드 / connect / 완료");
-        } catch (JWTDecodeException exception) {
-            throw new AuthenticationError();
+        } catch (AccessTokenExpiredException
+                 | TokenDecodingFailedException exception
+        ) {
+            throw exception;
         }
     }
 

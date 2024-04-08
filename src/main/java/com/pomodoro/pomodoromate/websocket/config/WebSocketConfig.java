@@ -1,5 +1,6 @@
-package com.pomodoro.pomodoromate.config;
+package com.pomodoro.pomodoromate.websocket.config;
 
+import com.pomodoro.pomodoromate.websocket.WebSocketErrorHandler;
 import com.pomodoro.pomodoromate.websocket.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +17,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private String[] allowOrigins;
 
     private final WebSocketHandler webSocketHandler;
+    private final WebSocketErrorHandler webSocketErrorHandler;
 
-    public WebSocketConfig(WebSocketHandler webSocketHandler) {
+    public WebSocketConfig(WebSocketHandler webSocketHandler, WebSocketErrorHandler webSocketErrorHandler) {
         this.webSocketHandler = webSocketHandler;
+        this.webSocketErrorHandler = webSocketErrorHandler;
     }
 
     @Override
@@ -26,6 +29,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/study")
                 .setAllowedOrigins(allowOrigins)
                 .withSockJS();
+
+        registry.setErrorHandler(webSocketErrorHandler);
     }
 
     @Override

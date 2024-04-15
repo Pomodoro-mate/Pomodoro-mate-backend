@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.controllers;
 
+import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
@@ -38,15 +39,18 @@ public class StudyRoomController {
     private final GetStudyRoomsService getStudyRoomsService;
     private final GetStudyRoomService getStudyRoomService;
     private final StudyProgressService studyProgressService;
+    private final ParticipateService participateService;
 
     public StudyRoomController(CreateStudyRoomService createStudyRoomService,
                                GetStudyRoomsService getStudyRoomsService,
                                GetStudyRoomService getStudyRoomService,
-                               StudyProgressService studyProgressService) {
+                               StudyProgressService studyProgressService,
+                               ParticipateService participateService) {
         this.createStudyRoomService = createStudyRoomService;
         this.getStudyRoomsService = getStudyRoomsService;
         this.getStudyRoomService = getStudyRoomService;
         this.studyProgressService = studyProgressService;
+        this.participateService = participateService;
     }
 
     @Operation(summary = "스터디룸 목록 조회")
@@ -82,8 +86,10 @@ public class StudyRoomController {
 
         Long studyRoomId = createStudyRoomService.create(request, userId);
 
+        Long participateId = participateService.participate(userId, StudyRoomId.of(studyRoomId));
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CreateStudyRoomResponseDto(studyRoomId));
+                .body(new CreateStudyRoomResponseDto(studyRoomId, participateId));
     }
 
     @Operation(summary = "다음 스터디 단계 진행")

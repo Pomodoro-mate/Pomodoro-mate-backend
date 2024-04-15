@@ -1,8 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
-import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
-import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomInfo;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
@@ -12,19 +10,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-@ActiveProfiles("test")
 class CreateStudyRoomServiceTest {
     private StudyRoomRepository studyRoomRepository;
     private ValidateUserService validateUserService;
-    private ParticipateService participateService;
     private PasswordEncoder passwordEncoder;
     private CreateStudyRoomService createStudyRoomService;
 
@@ -32,10 +26,9 @@ class CreateStudyRoomServiceTest {
     void setUp() {
         studyRoomRepository = mock(StudyRoomRepository.class);
         validateUserService = mock(ValidateUserService.class);
-        participateService = mock(ParticipateService.class);
         passwordEncoder = mock(Argon2PasswordEncoder.class);
         createStudyRoomService = new CreateStudyRoomService(
-                studyRoomRepository, validateUserService, participateService, passwordEncoder);
+                studyRoomRepository, validateUserService, passwordEncoder);
     }
 
     @Test

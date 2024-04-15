@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;

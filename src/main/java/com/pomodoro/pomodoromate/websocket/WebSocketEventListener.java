@@ -1,7 +1,7 @@
 package com.pomodoro.pomodoromate.websocket;
 
 import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService;
-import com.pomodoro.pomodoromate.participant.applications.ParticipantSummariesDto;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotFoundException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;

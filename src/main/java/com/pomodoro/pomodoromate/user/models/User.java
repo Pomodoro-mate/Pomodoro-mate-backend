@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.user.models;
 
+import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.common.models.Status;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -12,7 +13,7 @@ import lombok.Builder;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;

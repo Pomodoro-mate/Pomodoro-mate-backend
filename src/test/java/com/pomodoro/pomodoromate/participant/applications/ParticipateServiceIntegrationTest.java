@@ -34,7 +34,7 @@ class ParticipateServiceIntegrationTest {
     private ParticipateService participateService;
 
     @Test
-    void participateWith() throws InterruptedException {
+    void participateConcurrentVerification() throws InterruptedException {
         int requestCount = 10;
 
         StudyRoom studyRoom = StudyRoom.builder()

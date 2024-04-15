@@ -1,4 +1,4 @@
-package com.pomodoro.pomodoromate.participant.applications;
+package com.pomodoro.pomodoromate.participant.dtos;
 
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 

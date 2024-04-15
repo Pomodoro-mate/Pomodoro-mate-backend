@@ -2,7 +2,7 @@ package com.pomodoro.pomodoromate.participant.cotrollers;
 
 import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService;
 import com.pomodoro.pomodoromate.participant.applications.LeaveStudyService;
-import com.pomodoro.pomodoromate.participant.applications.ParticipantSummariesDto;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateResponseDto;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;

@@ -14,6 +14,4 @@ public interface ParticipantRepositoryQueryDsl {
     List<Participant> findAllActiveBy(StudyRoomId id);
 
     Optional<Participant> findBy(UserId userId, StudyRoomId studyRoomId);
-
-    Optional<Participant> findBy(SessionId sessionId);
 }

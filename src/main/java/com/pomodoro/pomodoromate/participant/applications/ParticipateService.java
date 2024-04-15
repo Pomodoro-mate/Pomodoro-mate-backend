@@ -30,7 +30,7 @@ public class ParticipateService {
     }
 
     @Transactional
-    public Long participate(UserId userId, StudyRoomId studyRoomId) {
+    public synchronized Long participate(UserId userId, StudyRoomId studyRoomId) {
         User user = userRepository.findById(userId.value())
                 .orElseThrow(UnauthorizedException::new);
 
@@ -43,6 +43,10 @@ public class ParticipateService {
 
         studyRoom.validateMaxParticipantExceeded(participantCount);
 
+        return createOrUpdateParticipant(userId, studyRoomId, user, studyRoom);
+    }
+
+    private Long createOrUpdateParticipant(UserId userId, StudyRoomId studyRoomId, User user, StudyRoom studyRoom) {
         Optional<Participant> existingParticipant = participantRepository.findBy(userId, studyRoomId);
 
         if (existingParticipant.isPresent()) {

@@ -86,10 +86,10 @@ public class StudyRoomController {
 
         Long studyRoomId = createStudyRoomService.create(request, userId);
 
-        Long participateId = participateService.participate(userId, StudyRoomId.of(studyRoomId));
+        Long participantId = participateService.participate(userId, StudyRoomId.of(studyRoomId));
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new CreateStudyRoomResponseDto(studyRoomId, participateId));
+                .body(new CreateStudyRoomResponseDto(studyRoomId, participantId));
     }
 
     @Operation(summary = "다음 스터디 단계 진행")

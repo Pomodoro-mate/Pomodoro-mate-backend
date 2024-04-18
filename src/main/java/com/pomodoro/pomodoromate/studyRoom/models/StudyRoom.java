@@ -1,14 +1,15 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
-import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -16,12 +17,16 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StudyRoom extends BaseEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class StudyRoom {
     @Id
     @GeneratedValue
     private Long id;
@@ -43,6 +48,12 @@ public class StudyRoom extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Step step;
 
+    @Column(updatable = false)
+    @CreatedDate
+    private LocalDateTime createAt;
+
+    private LocalDateTime updateAt;
+
     @Builder
     public StudyRoom(Long id, StudyRoomInfo info, MaxParticipantCount maxParticipantCount, TimeSet timeSet) {
         this.id = id;
@@ -54,6 +65,7 @@ public class StudyRoom extends BaseEntity {
 
         this.step = Step.WAITING;
     }
+
 
 //    public void changePassword(StudyRoomPassword password, PasswordEncoder passwordEncoder) {
 //        Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
@@ -72,7 +84,6 @@ public class StudyRoom extends BaseEntity {
 //        }
 
 //    }
-
     public void validateIncomplete() {
         if (isStep(Step.COMPLETED)) {
             throw new StudyAlreadyCompletedException();
@@ -95,6 +106,7 @@ public class StudyRoom extends BaseEntity {
 
     public void proceedToNextStep() {
         this.step = step.nextStep();
+        this.updateAt = LocalDateTime.now();
 
         if (timeSet.isTimeZero(step)) {
             proceedToNextStep();
@@ -118,6 +130,7 @@ public class StudyRoom extends BaseEntity {
     public StudyRoomInfo info() {
         return info;
     }
+
 //    public UserId hostId() {
 //        return hostId;
 
@@ -126,13 +139,20 @@ public class StudyRoom extends BaseEntity {
 //        return password;
 
 //    }
-
     public Step step() {
         return step;
     }
 
     public TimeSet timeSet() {
         return timeSet;
+    }
+
+    public LocalDateTime createAt() {
+        return createAt;
+    }
+
+    public LocalDateTime updateAt() {
+        return updateAt;
     }
 
     public StudyRoomDetailDto toDetailDto(List<ParticipantSummaryDto> participantSummaryDtos) {

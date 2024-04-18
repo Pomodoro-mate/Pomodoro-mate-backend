@@ -29,7 +29,7 @@ public class ParticipateService {
         this.studyRoomRepository = studyRoomRepository;
     }
 
-    @Transactional
+    // @Transactional
     public synchronized Long participate(UserId userId, StudyRoomId studyRoomId) {
         User user = userRepository.findById(userId.value())
                 .orElseThrow(UnauthorizedException::new);

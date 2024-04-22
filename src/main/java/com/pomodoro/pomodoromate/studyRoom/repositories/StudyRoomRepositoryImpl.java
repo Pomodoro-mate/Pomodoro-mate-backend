@@ -6,7 +6,6 @@ import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.models.QStudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.Step;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
-import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;

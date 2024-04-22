@@ -62,7 +62,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(studyRoom.id().value()))
+        given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         given(participantRepository.countActiveBy(studyRoom.id()))
@@ -100,7 +100,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(invalidStudyRoomId.value()))
+        given(studyRoomRepository.findByIdForUpdate(invalidStudyRoomId.value()))
                 .willThrow(StudyRoomNotFoundException.class);
 
         assertThrows(StudyRoomNotFoundException.class,
@@ -128,7 +128,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(studyRoom.id().value()))
+        given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         given(participantRepository.countActiveBy(studyRoom.id()))
@@ -152,7 +152,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(studyRoom.id().value()))
+        given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         given(participantRepository.countActiveBy(studyRoom.id()))

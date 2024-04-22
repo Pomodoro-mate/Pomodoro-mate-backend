@@ -5,18 +5,21 @@ import com.pomodoro.pomodoromate.participant.models.QParticipant;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.models.QStudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.Step;
+import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class StudyRoomRepositoryImpl implements StudyRoomRepositoryQueryDsl {
@@ -48,6 +51,19 @@ public class StudyRoomRepositoryImpl implements StudyRoomRepositoryQueryDsl {
         Long count = getPageCount(studyRoom);
 
         return new PageImpl<>(studyRooms, pageable, count);
+    }
+
+    @Override
+    public Optional<StudyRoom> findByIdForUpdate(Long id) {
+        QStudyRoom studyRoom = QStudyRoom.studyRoom;
+
+        return Optional.ofNullable(
+                queryFactory
+                        .select(studyRoom)
+                        .from(studyRoom)
+                        .where(studyRoom.id.eq(id))
+                        .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                        .fetchOne());
     }
 
     private Expression<Long> getActiveParticipantCount(QStudyRoom studyRoom) {

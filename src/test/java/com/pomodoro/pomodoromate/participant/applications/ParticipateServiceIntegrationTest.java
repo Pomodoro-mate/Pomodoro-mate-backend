@@ -35,11 +35,11 @@ class ParticipateServiceIntegrationTest {
 
     @Test
     void participateConcurrentVerification() throws InterruptedException {
-        int requestCount = 5;
+        int requestCount = 100;
 
         StudyRoom studyRoom = StudyRoom.builder()
                 .id(1000L)
-                .maxParticipantCount(MaxParticipantCount.of(3))
+                .maxParticipantCount(MaxParticipantCount.of(8))
                 .build();
 
         studyRoomRepository.save(studyRoom);
@@ -52,7 +52,7 @@ class ParticipateServiceIntegrationTest {
             userRepository.save(user);
         }
 
-        int threadCount = 5;
+        int threadCount = 30;
 
         // thread 사용할 수 있는 서비스 선언, 몇 개의 스레드 사용할건지 지정
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -77,6 +77,6 @@ class ParticipateServiceIntegrationTest {
 
         Long participantCount = participantRepository.countActiveBy(studyRoom.id());
 
-        assertThat(participantCount).isEqualTo(3L);
+        assertThat(participantCount).isEqualTo(8L);
     }
 }

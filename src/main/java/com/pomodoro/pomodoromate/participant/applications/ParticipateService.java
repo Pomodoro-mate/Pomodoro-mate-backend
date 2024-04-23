@@ -11,6 +11,7 @@ import com.pomodoro.pomodoromate.user.models.User;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -28,12 +29,12 @@ public class ParticipateService {
         this.studyRoomRepository = studyRoomRepository;
     }
 
-    // @Transactional
-    public synchronized Long participate(UserId userId, StudyRoomId studyRoomId) {
+    @Transactional
+    public Long participate(UserId userId, StudyRoomId studyRoomId) {
         User user = userRepository.findById(userId.value())
                 .orElseThrow(UnauthorizedException::new);
 
-        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
+        StudyRoom studyRoom = studyRoomRepository.findByIdForUpdate(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
         studyRoom.validateIncomplete();

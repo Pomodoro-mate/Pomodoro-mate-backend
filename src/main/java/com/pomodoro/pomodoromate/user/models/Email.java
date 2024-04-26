@@ -6,19 +6,19 @@ import lombok.EqualsAndHashCode;
 
 @Embeddable
 @EqualsAndHashCode
-public class Username {
-    @Column(name = "username")
+public class Email {
+    @Column(name = "email")
     private String value;
 
-    public Username() {
+    public Email() {
     }
 
-    public Username(String value) {
+    public Email(String value) {
         this.value = value;
     }
 
-    public static Username of(String username) {
-        return new Username(username);
+    public static Email of(String email) {
+        return new Email(email);
     }
 
     public String value() {

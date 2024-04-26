@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -62,7 +62,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(studyRoom.id().value()))
+        given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         given(participantRepository.countActiveBy(studyRoom.id()))
@@ -100,7 +100,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(invalidStudyRoomId.value()))
+        given(studyRoomRepository.findByIdForUpdate(invalidStudyRoomId.value()))
                 .willThrow(StudyRoomNotFoundException.class);
 
         assertThrows(StudyRoomNotFoundException.class,
@@ -128,7 +128,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(studyRoom.id().value()))
+        given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         given(participantRepository.countActiveBy(studyRoom.id()))
@@ -152,7 +152,7 @@ class ParticipateServiceTest {
         given(userRepository.findById(user.id().value()))
                 .willReturn(Optional.of(user));
 
-        given(studyRoomRepository.findById(studyRoom.id().value()))
+        given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
         given(participantRepository.countActiveBy(studyRoom.id()))

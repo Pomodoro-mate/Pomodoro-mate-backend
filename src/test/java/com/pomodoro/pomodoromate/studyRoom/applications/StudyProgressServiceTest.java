@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.config.JpaAuditingConfig;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;

@@ -1,11 +1,9 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
-import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
-import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
-import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import com.pomodoro.pomodoromate.user.models.UserInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 

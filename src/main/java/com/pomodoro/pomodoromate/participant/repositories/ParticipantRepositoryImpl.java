@@ -54,14 +54,4 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
                         participant.userId.eq(userId)))
                 .fetchOne());
     }
-
-    @Override
-    public Optional<Participant> findBy(SessionId sessionId) {
-        QParticipant participant = QParticipant.participant;
-
-        return Optional.ofNullable(queryFactory
-                .selectFrom(participant)
-                .where(participant.sessionId.eq(sessionId))
-                .fetchOne());
-    }
 }

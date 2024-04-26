@@ -40,9 +40,6 @@ public class Participant extends BaseEntity {
     @Embedded
     private UserInfo userInfo;
 
-    @Embedded
-    private SessionId sessionId;
-
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -75,10 +72,6 @@ public class Participant extends BaseEntity {
         return status;
     }
 
-    public SessionId sessionId() {
-        return sessionId;
-    }
-
     public void validateParticipant(UserId userId) {
         if (!this.userId.equals(userId)) {
             throw new AuthorizationException();
@@ -98,11 +91,6 @@ public class Participant extends BaseEntity {
     public ParticipantSummaryDto toSummaryDto() {
         return new ParticipantSummaryDto(id, userId.value(),
                 userInfo.nickname(), userInfo.imageUrl());
-    }
-
-    public void activate(SessionId sessionId) {
-        this.sessionId = sessionId;
-        this.status = Status.ACTIVE;
     }
 
     public void activate() {

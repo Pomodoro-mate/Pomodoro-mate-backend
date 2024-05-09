@@ -55,4 +55,18 @@ public class LeaveStudyService {
             completeStudyRoomService.completeStudy(studyRoomId);
         }
     }
+
+    @Transactional
+    public void leaveStudy(UserId userId, StudyRoomId studyRoomId) {
+        Participant participant = participantRepository.findBy(userId, studyRoomId)
+                .orElseThrow(ParticipantNotFoundException::new);
+
+        participant.delete();
+
+        Long participantCount = participantRepository.countActiveBy(studyRoomId);
+
+        if (participantCount == 0) {
+            completeStudyRoomService.completeStudy(studyRoomId);
+        }
+    }
 }

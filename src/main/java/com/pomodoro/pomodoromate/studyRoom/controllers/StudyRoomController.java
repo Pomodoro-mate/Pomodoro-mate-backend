@@ -86,7 +86,7 @@ public class StudyRoomController {
 
         Long studyRoomId = createStudyRoomService.create(request, userId);
 
-        Long participantId = participateService.participate(userId, StudyRoomId.of(studyRoomId));
+        Long participantId = participateService.participateForCreator(userId, StudyRoomId.of(studyRoomId));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CreateStudyRoomResponseDto(studyRoomId, participantId));

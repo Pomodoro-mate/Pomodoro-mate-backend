@@ -10,6 +10,7 @@ public record CreateStudyRoomRequestDto(
         String intro,
 //        Boolean isPrivate,
 //        String password,
-        @NotNull TimeSetDto timeSet
+        @NotNull TimeSetDto timeSet,
+        boolean isForce
 ) {
 }

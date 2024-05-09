@@ -7,6 +7,7 @@ import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotFoundException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.ParticipatingRoomExistsException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
@@ -21,6 +22,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -70,7 +72,13 @@ public class WebSocketHandler implements ChannelInterceptor {
             Long studyRoomId = Long.valueOf(accessor.getFirstNativeHeader(STUDY_ROOM_ID_HEADER));
             log.info("studyRoomId: " + studyRoomId);
 
-            StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
+            Optional<StudyRoom> participatingRoom = studyRoomRepository.findParticipatingRoomBy(userId);
+
+            if (participatingRoom.isPresent() && !participatingRoom.get().id().value().equals(studyRoomId)) {
+                throw new ParticipatingRoomExistsException();
+            }
+
+            StudyRoom studyRoom = studyRoomRepository.findByIdForUpdate(studyRoomId)
                     .orElseThrow(StudyRoomNotFoundException::new);
 
             studyRoom.validateIncomplete();
@@ -87,6 +95,10 @@ public class WebSocketHandler implements ChannelInterceptor {
             log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
 
             participant.activate();
+
+            Long participantCount = participantRepository.countActiveBy(studyRoom.id());
+
+            studyRoom.validateMaxParticipantExceeded(participantCount - 1);
 
             log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
 

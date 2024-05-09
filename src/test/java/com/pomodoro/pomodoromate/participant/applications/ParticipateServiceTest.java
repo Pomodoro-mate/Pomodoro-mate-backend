@@ -258,12 +258,6 @@ class ParticipateServiceTest {
 
             given(userRepository.findById(user.id().value()))
                     .willReturn(Optional.of(user));
-//
-//        given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
-//                .willReturn(Optional.of(studyRoom));
-//
-//        given(participantRepository.countActiveBy(studyRoom.id()))
-//                .willReturn(studyRoom.maxParticipantCount().longValue());
 
             assertThrows(ParticipatingRoomExistsException.class,
                     () -> participateService.participate(request, user.id(), studyRoom.id()));

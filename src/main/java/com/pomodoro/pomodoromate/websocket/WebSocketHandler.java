@@ -74,8 +74,10 @@ public class WebSocketHandler implements ChannelInterceptor {
 
             Optional<StudyRoom> participatingRoom = studyRoomRepository.findParticipatingRoomBy(userId);
 
-            if (participatingRoom.isPresent() && !participatingRoom.get().id().value().equals(studyRoomId)) {
-                throw new ParticipatingRoomExistsException();
+            if (participatingRoom.isPresent()) {
+                if (!participatingRoom.get().id().value().equals(studyRoomId)) {
+                    throw new ParticipatingRoomExistsException();
+                }
             }
 
             StudyRoom studyRoom = studyRoomRepository.findByIdForUpdate(studyRoomId)

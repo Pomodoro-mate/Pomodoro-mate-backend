@@ -37,6 +37,10 @@ public class UserInfo {
         this.intro = intro; //TODO 예외처리
     }
 
+    public static UserInfo of(String name) {
+        return new UserInfo(name);
+    }
+
     private void validateNickName(String nickname) {
         Pattern pattern = Pattern.compile(NICKNAME_PATTERN);
         Matcher matcher = pattern.matcher(nickname);

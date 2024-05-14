@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -10,10 +11,12 @@ public class GoogleConfig {
     @Value("${google.client.password}")
     private String clientPassword;
 
+    @Bean
     public String clientId() {
         return clientId;
     }
 
+    @Bean
     public String clientPassword() {
         return clientPassword;
     }

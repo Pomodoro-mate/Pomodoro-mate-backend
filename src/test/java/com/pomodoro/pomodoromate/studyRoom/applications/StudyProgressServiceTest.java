@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.config.GoogleConfig;
 import com.pomodoro.pomodoromate.config.JpaAuditingConfig;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
@@ -15,12 +16,14 @@ import com.pomodoro.pomodoromate.studyRoom.models.TimeSet;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.UserId;
+import com.pomodoro.pomodoromate.websocket.config.WebSocketConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 

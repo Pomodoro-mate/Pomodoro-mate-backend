@@ -14,12 +14,14 @@ import com.pomodoro.pomodoromate.user.models.UserId;
 import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.concurrent.CountDownLatch;
@@ -28,13 +30,13 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ComponentScan(excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = GoogleConfig.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = GoogleUtil.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtConfig.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtUtil.class)
-})
+@SpringBootTest(classes = {GoogleConfig.class, JwtConfig.class}, properties = {
+        "google.client.id=your-google-client-id",
+        "google.client.password=your-google-client-password",
+        "jwt.secret=1",
+        "access-token.validation-second=1",
+        "refresh-token.validation-second=1",
+        })
 @ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
     private final ParticipantRepository participantRepository;

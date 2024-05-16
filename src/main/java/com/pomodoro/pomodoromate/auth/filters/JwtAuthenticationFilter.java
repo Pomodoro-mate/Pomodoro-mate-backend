@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (AccessTokenExpiredException
-                | TokenDecodingFailedException exception
+                 | TokenDecodingFailedException exception
         ) {
             response.setStatus(exception.statusCode().value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

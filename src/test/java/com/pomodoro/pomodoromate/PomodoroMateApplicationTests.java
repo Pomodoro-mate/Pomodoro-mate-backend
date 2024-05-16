@@ -11,7 +11,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {GoogleConfig.class})
-@TestPropertySource(locations = "classpath:application.properties")
+@TestPropertySource(locations = "/src/main/resources/application.properties")
 class PomodoroMateApplicationTests {
 
     @Test

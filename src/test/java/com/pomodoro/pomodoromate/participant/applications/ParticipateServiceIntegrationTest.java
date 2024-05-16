@@ -1,9 +1,5 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
-import com.pomodoro.pomodoromate.auth.config.GoogleConfig;
-import com.pomodoro.pomodoromate.auth.config.JwtConfig;
-import com.pomodoro.pomodoromate.auth.utils.GoogleUtil;
-import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
@@ -14,15 +10,8 @@ import com.pomodoro.pomodoromate.user.models.UserId;
 import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

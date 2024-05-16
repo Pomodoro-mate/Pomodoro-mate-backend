@@ -15,18 +15,5 @@ class PomodoroMateApplicationTests {
 
     @Test
     void contextLoads() {
-        googleUtil();
-        jwtUtil();
-    }
-
-    @Bean
-    public GoogleUtil googleUtil(
-    ) {
-        return new GoogleUtil("clientId", "");
-    }
-
-    @Bean
-    public JwtUtil jwtUtil() {
-        return new JwtUtil("d", 1L, 1L);
     }
 }

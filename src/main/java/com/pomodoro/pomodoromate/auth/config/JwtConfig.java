@@ -17,7 +17,7 @@ public class JwtConfig {
     @Value("${refresh-token.validation-second}")
     private Long refreshTokenValidationSecond;
 
-    @ConditionalOnMissingBean
+    @Bean
     public JwtUtil jwtUtil() {
         return new JwtUtil(secret,
                 accessTokenValidationSecond,

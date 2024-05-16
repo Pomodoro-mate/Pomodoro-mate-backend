@@ -16,7 +16,7 @@ class PomodoroMateApplicationTests {
     @Test
     void contextLoads() {
         googleUtil();
-        jwtUtil()
+        jwtUtil();
     }
 
     @Bean

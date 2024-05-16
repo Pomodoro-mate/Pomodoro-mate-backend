@@ -1,6 +1,9 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
 import com.pomodoro.pomodoromate.auth.config.GoogleConfig;
+import com.pomodoro.pomodoromate.auth.config.JwtConfig;
+import com.pomodoro.pomodoromate.auth.utils.GoogleUtil;
+import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
@@ -13,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -23,13 +28,15 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = {
-        "google.client.id=id",
-        "google.client.password=password"
+@SpringBootTest
+@ComponentScan(excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = GoogleConfig.class),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = GoogleUtil.class),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtConfig.class),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JwtUtil.class)
 })
 @ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
-    private final GoogleConfig googleConfig;
     private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;
     private final StudyRoomRepository studyRoomRepository;
@@ -46,7 +53,6 @@ class ParticipateServiceIntegrationTest {
         this.userRepository = userRepository;
         this.studyRoomRepository = studyRoomRepository;
         this.participateService = participateService;
-        this.googleConfig = googleConfig;
     }
 
     @Test

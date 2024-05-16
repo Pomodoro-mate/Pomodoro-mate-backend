@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Import(GoogleConfig.class)
 //@ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application.yml")
+@TestPropertySource(locations = "classpath:application.properties")
 class ParticipateServiceIntegrationTest {
 
     @Autowired

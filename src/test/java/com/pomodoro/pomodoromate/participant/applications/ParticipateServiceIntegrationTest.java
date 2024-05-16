@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
+import com.pomodoro.pomodoromate.auth.config.GoogleConfig;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
@@ -11,6 +12,8 @@ import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.concurrent.CountDownLatch;
@@ -20,8 +23,10 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles("test")
+//@Import(GoogleConfig.class)
+//@ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
+
     @Autowired
     private ParticipantRepository participantRepository;
 

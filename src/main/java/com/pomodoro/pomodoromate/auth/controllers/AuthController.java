@@ -1,10 +1,10 @@
 package com.pomodoro.pomodoromate.auth.controllers;
 
-//import com.pomodoro.pomodoromate.auth.applications.GoogleLoginService;
-
+import com.pomodoro.pomodoromate.auth.applications.GoogleLoginService;
 import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
 import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
 import com.pomodoro.pomodoromate.auth.dtos.*;
+import com.pomodoro.pomodoromate.auth.utils.GoogleUtil;
 import com.pomodoro.pomodoromate.common.utils.HttpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,14 +25,17 @@ public class AuthController {
     private final GuestLoginService guestLoginService;
     private final IssueTokenService issueTokenService;
     private final HttpUtil httpUtil;
+    private final GoogleLoginService googleLoginService;
 
     public AuthController(GuestLoginService guestLoginService,
                           IssueTokenService issueTokenService,
-                          HttpUtil httpUtil
+                          HttpUtil httpUtil,
+                          GoogleLoginService googleLoginService
     ) {
         this.guestLoginService = guestLoginService;
         this.issueTokenService = issueTokenService;
         this.httpUtil = httpUtil;
+        this.googleLoginService = googleLoginService;
     }
 
     @Operation(summary = "게스트 로그인")
@@ -83,26 +86,26 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-//    @Operation(summary = "구글 로그인 페이지 URL")
-//    @PostMapping("/v1/oauth2/google")
-//    public String googleLoginUrl() {
-//        String googleAuthUrl = googleLoginService.getGoogleOAuth2RedirectUrl();
-//
-//        return googleAuthUrl;
-//    }
-//
-//    @Operation(summary = "구글 로그인")
-//    @GetMapping("/v1/oauth2/google")
-//    public ResponseEntity<LoginResponseDto> googleLogin(
-//            @RequestParam(value = "code") String authCode
-//    ) {
-//        GoogleResponse googleTokenResponse = googleLoginService.getGoogleLoginAccessToken(authCode);
-//
-//        GoogleInfoResponse userInformationResponse = googleLoginService.getGoogleUserInformation(googleTokenResponse);
-//
-//        TokenDto token = googleLoginService.login(userInformationResponse);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body(new LoginResponseDto(token.accessToken()));
-//    }
+    @Operation(summary = "구글 로그인 페이지 URL")
+    @PostMapping("/v1/oauth2/google")
+    public String googleLoginUrl() {
+        String googleAuthUrl = googleLoginService.getGoogleOAuth2RedirectUrl();
+
+        return googleAuthUrl;
+    }
+
+    @Operation(summary = "구글 로그인")
+    @GetMapping("/v1/oauth2/google")
+    public ResponseEntity<LoginResponseDto> googleLogin(
+            @RequestParam(value = "code") String authCode
+    ) {
+        GoogleResponse googleTokenResponse = googleLoginService.getGoogleLoginAccessToken(authCode);
+
+        GoogleInfoResponse userInformationResponse = googleLoginService.getGoogleUserInformation(googleTokenResponse);
+
+        TokenDto token = googleLoginService.login(userInformationResponse);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new LoginResponseDto(token.accessToken()));
+    }
 }

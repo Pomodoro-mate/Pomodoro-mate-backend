@@ -1,6 +1,8 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
 import com.pomodoro.pomodoromate.auth.config.GoogleConfig;
+import com.pomodoro.pomodoromate.auth.config.JwtConfig;
+import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.config.HttpConfig;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
@@ -15,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

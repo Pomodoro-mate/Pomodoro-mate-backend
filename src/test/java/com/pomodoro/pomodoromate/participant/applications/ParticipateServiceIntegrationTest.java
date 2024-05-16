@@ -42,7 +42,7 @@ class ParticipateServiceIntegrationTest {
     public ParticipateServiceIntegrationTest(ParticipantRepository participantRepository,
                                              UserRepository userRepository,
                                              StudyRoomRepository studyRoomRepository,
-                                             ParticipateService participateService,
+                                             ParticipateService participateService
     ) {
         this.participantRepository = participantRepository;
         this.userRepository = userRepository;

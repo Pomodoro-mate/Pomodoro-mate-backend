@@ -23,10 +23,12 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "google.client.id=id",
+        "google.client.password=password"
+})
 @Import(GoogleConfig.class)
-//@ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application.properties")
+@ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
 
     @Autowired

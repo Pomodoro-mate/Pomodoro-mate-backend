@@ -1,11 +1,9 @@
 package com.pomodoro.pomodoromate.auth.controllers;
 
-import com.pomodoro.pomodoromate.auth.applications.GoogleLoginService;
 import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
 import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
 import com.pomodoro.pomodoromate.auth.config.JwtConfig;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
-import com.pomodoro.pomodoromate.config.GoogleConfig;
 import com.pomodoro.pomodoromate.config.HttpConfig;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import jakarta.servlet.http.Cookie;
@@ -33,9 +31,6 @@ class AuthControllerTest {
 
     @MockBean
     private GuestLoginService guestLoginService;
-
-    @MockBean
-    private GoogleLoginService googleLoginService;
 
     @MockBean
     private IssueTokenService issueTokenService;

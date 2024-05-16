@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 @Configuration
+public
 class PomodoroMateApplicationTests {
 
     @Test

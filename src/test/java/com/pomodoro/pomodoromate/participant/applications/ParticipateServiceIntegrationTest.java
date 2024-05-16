@@ -30,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
         "same-site=test-same-site",
         "allow-origin=test-allow-origin"
 }, classes = {PomodoroMateApplicationTests.class})
-@ActiveProfiles("test")
 class ParticipateServiceIntegrationTest extends TestContainer {
     private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.context.annotation.Import;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Import({ GoogleConfig.class })
+@ContextConfiguration(classes = {GoogleConfig.class})
 class ParticipateServiceIntegrationTest {
     @Autowired
     private ParticipantRepository participantRepository;

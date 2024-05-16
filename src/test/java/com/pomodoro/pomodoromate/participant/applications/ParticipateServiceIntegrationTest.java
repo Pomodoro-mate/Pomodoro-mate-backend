@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -23,8 +24,9 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-//@Import(GoogleConfig.class)
+@Import(GoogleConfig.class)
 //@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application.yml")
 class ParticipateServiceIntegrationTest {
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
+import com.pomodoro.pomodoromate.TestContainer;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
@@ -19,9 +20,17 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "google.client.id=test-client-id",
+        "google.client.password=test-client-password",
+        "jwt.secret=test-jwt-secret",
+        "access-token.validation-second=3600",
+        "refresh-token.validation-second=86400",
+        "same-site=test-same-site",
+        "allow-origin=test-allow-origin"
+})
 @ActiveProfiles("test")
-class ParticipateServiceIntegrationTest {
+class ParticipateServiceIntegrationTest extends TestContainer {
     private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;
     private final StudyRoomRepository studyRoomRepository;

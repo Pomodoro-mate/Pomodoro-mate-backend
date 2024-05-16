@@ -1,10 +1,5 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
-import com.pomodoro.pomodoromate.auth.config.GoogleConfig;
-import com.pomodoro.pomodoromate.auth.config.JwtConfig;
-import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
-import com.pomodoro.pomodoromate.config.HttpConfig;
-import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
@@ -26,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {GoogleConfig.class})
 class ParticipateServiceIntegrationTest {
     @Autowired
     private ParticipantRepository participantRepository;

@@ -27,21 +27,27 @@ import static org.assertj.core.api.Assertions.assertThat;
         "google.client.id=id",
         "google.client.password=password"
 })
-@Import(GoogleConfig.class)
 @ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
+    private final GoogleConfig googleConfig;
+    private final ParticipantRepository participantRepository;
+    private final UserRepository userRepository;
+    private final StudyRoomRepository studyRoomRepository;
+    private final ParticipateService participateService;
 
     @Autowired
-    private ParticipantRepository participantRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private StudyRoomRepository studyRoomRepository;
-
-    @Autowired
-    private ParticipateService participateService;
+    public ParticipateServiceIntegrationTest(ParticipantRepository participantRepository,
+                                             UserRepository userRepository,
+                                             StudyRoomRepository studyRoomRepository,
+                                             ParticipateService participateService,
+                                             GoogleConfig googleConfig
+    ) {
+        this.participantRepository = participantRepository;
+        this.userRepository = userRepository;
+        this.studyRoomRepository = studyRoomRepository;
+        this.participateService = participateService;
+        this.googleConfig = googleConfig;
+    }
 
     @Test
     void participateConcurrentVerification() throws InterruptedException {

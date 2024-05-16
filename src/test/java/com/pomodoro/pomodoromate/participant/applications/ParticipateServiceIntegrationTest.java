@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@ContextConfiguration(classes = {GoogleConfig.class})
 class ParticipateServiceIntegrationTest {
     @Autowired
     private ParticipantRepository participantRepository;

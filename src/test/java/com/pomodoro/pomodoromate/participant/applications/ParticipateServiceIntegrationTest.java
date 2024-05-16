@@ -30,13 +30,7 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {GoogleConfig.class, JwtConfig.class}, properties = {
-        "google.client.id=your-google-client-id",
-        "google.client.password=your-google-client-password",
-        "jwt.secret=1",
-        "access-token.validation-second=1",
-        "refresh-token.validation-second=1",
-        })
+@SpringBootTest
 @ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
     private final ParticipantRepository participantRepository;
@@ -49,7 +43,6 @@ class ParticipateServiceIntegrationTest {
                                              UserRepository userRepository,
                                              StudyRoomRepository studyRoomRepository,
                                              ParticipateService participateService,
-                                             GoogleConfig googleConfig
     ) {
         this.participantRepository = participantRepository;
         this.userRepository = userRepository;

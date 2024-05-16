@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
+import com.pomodoro.pomodoromate.PomodoroMateApplication;
 import com.pomodoro.pomodoromate.TestContainer;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -30,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "allow-origin=test-allow-origin"
 })
 @ActiveProfiles("test")
+@ContextConfiguration(classes = {PomodoroMateApplication.class})
 class ParticipateServiceIntegrationTest extends TestContainer {
     private final ParticipantRepository participantRepository;
     private final UserRepository userRepository;

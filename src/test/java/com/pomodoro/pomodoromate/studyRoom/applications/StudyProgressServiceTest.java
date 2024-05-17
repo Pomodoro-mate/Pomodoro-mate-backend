@@ -32,14 +32,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
 class StudyProgressServiceTest {
     private ValidateUserService validateUserService;
     private StudyRoomRepository studyRoomRepository;
     private StudyProgressService studyProgressService;
     private ParticipantRepository participantRepository;
-
-    @SpyBean
     private SimpMessagingTemplate messagingTemplate;
 
     @BeforeEach
@@ -47,6 +44,7 @@ class StudyProgressServiceTest {
         validateUserService = mock(ValidateUserService.class);
         studyRoomRepository = mock(StudyRoomRepository.class);
         participantRepository = mock(ParticipantRepository.class);
+        messagingTemplate = mock(SimpMessagingTemplate.class);
         studyProgressService = new StudyProgressService(
                 validateUserService,
                 studyRoomRepository,

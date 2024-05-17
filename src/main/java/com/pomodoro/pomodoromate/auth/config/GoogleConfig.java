@@ -7,11 +7,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GoogleConfig {
+    @Value("${google.client.id}")
+    private String clientId;
+
+    @Value("${google.client.password}")
+    private String clientPassword;
+
     @Bean
-    public GoogleUtil googleUtil(
-            @Value("${google.client.id}") String clientId,
-            @Value("${google.client.password}") String clientPassword
-    ) {
+    public GoogleUtil googleUtil() {
         return new GoogleUtil(clientId, clientPassword);
     }
 }

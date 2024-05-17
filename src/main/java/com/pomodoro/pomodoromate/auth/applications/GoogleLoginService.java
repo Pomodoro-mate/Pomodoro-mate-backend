@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Transactional
 @Service
 public class GoogleLoginService {
     private final UserRepository userRepository;
@@ -27,13 +26,15 @@ public class GoogleLoginService {
 
     public GoogleLoginService(
             UserRepository userRepository,
-            IssueTokenService issueTokenService, GoogleUtil googleUtil
+            IssueTokenService issueTokenService,
+            GoogleUtil googleUtil
     ) {
         this.userRepository = userRepository;
         this.issueTokenService = issueTokenService;
         this.googleUtil = googleUtil;
     }
 
+    @Transactional
     public TokenDto login(GoogleInfoResponse userInformationResponse) {
         try {
             String email = userInformationResponse.email();

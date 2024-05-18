@@ -78,12 +78,4 @@ public class GoogleLoginService {
 
         return userInformationResponse;
     }
-
-    public String getGoogleOAuth2RedirectUrl() {
-        return googleUtil.getGoogleOAuth2RedirectUrl();
-    }
-
-    public GoogleResponse getGoogleLoginAccessToken(String authCode) {
-        return googleUtil.getGoogleLoginAccessToken(authCode);
-    }
 }

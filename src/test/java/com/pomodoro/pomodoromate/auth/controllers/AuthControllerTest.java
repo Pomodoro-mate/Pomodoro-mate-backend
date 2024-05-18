@@ -40,6 +40,9 @@ class AuthControllerTest {
     @MockBean
     private GoogleLoginService googleLoginService;
 
+    @MockBean
+    private GoogleUtil googleUtil;
+
     @Test
     void guestLogin() throws Exception {
         given(guestLoginService.login(any()))

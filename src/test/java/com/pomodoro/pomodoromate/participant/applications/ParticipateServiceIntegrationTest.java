@@ -19,7 +19,10 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "google.client.id=abc",
+        "google.client.password=abc"
+})
 @ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
     @Autowired
@@ -55,12 +58,8 @@ class ParticipateServiceIntegrationTest {
 
         int threadCount = 30;
 
-        // thread 사용할 수 있는 서비스 선언, 몇 개의 스레드 사용할건지 지정
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 
-        // 다른 스레드 작업 완료까지 기다리게 해주는 클래스
-        // 몇을 카운트할지 지정
-        // countDown()을 통해 0까지 세어야 await()하던 thread가 다시 실행됨
         CountDownLatch latch = new CountDownLatch(requestCount);
 
         ParticipateRequest request = ParticipateRequest.builder()

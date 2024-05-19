@@ -167,4 +167,9 @@ public class StudyRoom {
     public NextStepStudyRoomDto toNextStepDto() {
         return new NextStepStudyRoomDto(id, step.toString(), timeSet.getTimeOf(step), updateAt());
     }
+
+    public void update(StudyRoomInfo info, TimeSet timeSet) {
+        this.info = info;
+        this.timeSet = timeSet;
+    }
 }

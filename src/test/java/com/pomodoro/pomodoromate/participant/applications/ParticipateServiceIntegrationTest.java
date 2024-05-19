@@ -19,10 +19,7 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(properties = {
-        "google.client.id=abc",
-        "google.client.password=abc"
-})
+@SpringBootTest
 @ActiveProfiles("test")
 class ParticipateServiceIntegrationTest {
     @Autowired

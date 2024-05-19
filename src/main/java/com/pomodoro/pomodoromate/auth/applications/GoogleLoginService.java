@@ -1,11 +1,11 @@
 package com.pomodoro.pomodoromate.auth.applications;
 
+import com.pomodoro.pomodoromate.auth.config.GoogleConfig;
 import com.pomodoro.pomodoromate.auth.dtos.GoogleInfoResponse;
 import com.pomodoro.pomodoromate.auth.dtos.GoogleRequest;
 import com.pomodoro.pomodoromate.auth.dtos.GoogleResponse;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
 import com.pomodoro.pomodoromate.auth.exceptions.LoginFailed;
-import com.pomodoro.pomodoromate.config.GoogleConfig;
 import com.pomodoro.pomodoromate.user.models.Email;
 import com.pomodoro.pomodoromate.user.models.LoginType;
 import com.pomodoro.pomodoromate.user.models.User;

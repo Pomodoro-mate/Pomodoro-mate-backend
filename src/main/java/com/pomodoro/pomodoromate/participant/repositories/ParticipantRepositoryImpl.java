@@ -21,26 +21,26 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
     }
 
     @Override
-    public Long countActiveBy(StudyRoomId studyRoomId) {
+    public Long countNotDeletedBy(StudyRoomId studyRoomId) {
         QParticipant participant = QParticipant.participant;
 
         return queryFactory
                 .select(participant.count())
                 .from(participant)
                 .where(participant.studyRoomId.eq(studyRoomId).and(
-                        participant.status.eq(Status.ACTIVE)))
+                        participant.status.ne(Status.DELETED)))
                 .fetchOne();
     }
 
     @Override
-    public List<Participant> findAllActiveBy(StudyRoomId studyRoomId) {
+    public List<Participant> findAllNotDeletedBy(StudyRoomId studyRoomId) {
         QParticipant participant = QParticipant.participant;
 
         return queryFactory
                 .select(participant)
                 .from(participant)
                 .where(participant.studyRoomId.eq(studyRoomId).and(
-                        participant.status.eq(Status.ACTIVE)))
+                        participant.status.ne(Status.DELETED)))
                 .fetch();
     }
 

@@ -80,7 +80,7 @@ public class WebSocketHandler implements ChannelInterceptor {
                 }
             }
 
-            StudyRoom studyRoom = studyRoomRepository.findByIdForUpdate(studyRoomId)
+            StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
                     .orElseThrow(StudyRoomNotFoundException::new);
 
             studyRoom.validateIncomplete();
@@ -98,7 +98,7 @@ public class WebSocketHandler implements ChannelInterceptor {
 
             participant.activate();
 
-            Long participantCount = participantRepository.countActiveBy(studyRoom.id());
+            Long participantCount = participantRepository.countNotDeletedBy(studyRoom.id());
 
             studyRoom.validateMaxParticipantExceeded(participantCount - 1);
 

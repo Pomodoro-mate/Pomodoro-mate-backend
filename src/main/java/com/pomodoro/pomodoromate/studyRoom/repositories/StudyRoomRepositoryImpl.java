@@ -81,7 +81,7 @@ public class StudyRoomRepositoryImpl implements StudyRoomRepositoryQueryDsl {
                         .on(studyRoom.id.eq(participant.studyRoomId.value))
                         .innerJoin(user)
                         .on(participant.userId.eq(userId))
-                        .where(participant.status.eq(Status.ACTIVE).and(
+                        .where(participant.status.ne(Status.DELETED).and(
                                 studyRoom.step.ne(Step.COMPLETED)
                         ))
                         .fetchOne());

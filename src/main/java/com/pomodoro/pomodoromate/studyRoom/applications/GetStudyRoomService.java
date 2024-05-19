@@ -35,7 +35,7 @@ public class GetStudyRoomService {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
                 .orElseThrow(StudyRoomNotFoundException::new);
 
-        List<Participant> participants = participantRepository.findAllActiveBy(studyRoom.id());
+        List<Participant> participants = participantRepository.findAllNotDeletedBy(studyRoom.id());
 
         List<ParticipantSummaryDto> participantSummaryDtos = participants.stream()
                 .map(Participant::toSummaryDto).toList();

@@ -11,8 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -24,15 +27,18 @@ public class WebSocketEventListener {
     private final GetParticipantsService getParticipantsService;
     private final ParticipantRepository participantRepository;
     private final CompleteStudyRoomService completeStudyRoomService;
+    private final TaskScheduler taskScheduler;
 
     public WebSocketEventListener(SimpMessagingTemplate messagingTemplate,
                                   GetParticipantsService getParticipantsService,
                                   ParticipantRepository participantRepository,
-                                  CompleteStudyRoomService completeStudyRoomService) {
+                                  CompleteStudyRoomService completeStudyRoomService,
+                                  TaskScheduler taskScheduler) {
         this.messagingTemplate = messagingTemplate;
         this.getParticipantsService = getParticipantsService;
         this.participantRepository = participantRepository;
         this.completeStudyRoomService = completeStudyRoomService;
+        this.taskScheduler = taskScheduler;
     }
 
     @EventListener
@@ -52,28 +58,52 @@ public class WebSocketEventListener {
         if (participant != null && studyRoomId != null) {
             log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
 
-            participant.delete();
-
-            participantRepository.save(participant);
-
-            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
-
-            Long participantCount = participantRepository.countActiveBy(StudyRoomId.of(studyRoomId));
-
-            if (participantCount == 0) {
-                completeStudyRoomService.completeStudy(StudyRoomId.of(studyRoomId));
-
+            if (participant.isDeleted()) {
+                log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
                 log.info("[web socket] - handleWebSocketDisconnectListener 메서드 / 끝");
                 return;
             }
 
-            ParticipantSummariesDto participantSummariesDto = getParticipantsService
-                    .activeParticipants(StudyRoomId.of(studyRoomId));
+            participant.markPending();
+            participantRepository.save(participant);
+            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
 
-            messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
-                    , participantSummariesDto);
+            taskScheduler.schedule(() -> {
+                CheckPendingParticipantAndDelete(participantId, studyRoomId);
+            }, new Date(System.currentTimeMillis() + 10000));
         }
 
         log.info("[web socket] - handleWebSocketDisconnectListener 메서드 / 끝");
+    }
+
+    private void CheckPendingParticipantAndDelete(Long participantId, Long studyRoomId) {
+        log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 시작");
+
+        Participant participant = participantRepository.findById(participantId)
+                .orElseThrow(ParticipantNotFoundException::new);
+
+        if (participant.isPending()) {
+            participant.delete();
+            participantRepository.save(participant);
+            log.info("participant: " + participant.id().value() + " 상태를 DELETED로 변경");
+
+            Long participantCount = participantRepository.countNotDeletedBy(StudyRoomId.of(studyRoomId));
+
+            if (participantCount == 0) {
+                completeStudyRoomService.completeStudy(StudyRoomId.of(studyRoomId));
+                log.info("studyRoom: " + studyRoomId + " 스터디 종료");
+
+                log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 끝");
+                return;
+            }
+        }
+
+        ParticipantSummariesDto participantSummariesDto = getParticipantsService
+                .activeParticipants(StudyRoomId.of(studyRoomId));
+
+        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
+                , participantSummariesDto);
+
+        log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 끝");
     }
 }

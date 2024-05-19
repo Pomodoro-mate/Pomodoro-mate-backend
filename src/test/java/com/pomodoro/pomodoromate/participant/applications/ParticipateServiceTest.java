@@ -78,7 +78,7 @@ class ParticipateServiceTest {
             given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.countActiveBy(studyRoom.id()))
+            given(participantRepository.countNotDeletedBy(studyRoom.id()))
                     .willReturn(1L);
 
             given(participantRepository.save(any()))
@@ -120,7 +120,7 @@ class ParticipateServiceTest {
             given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.countActiveBy(studyRoom.id()))
+            given(participantRepository.countNotDeletedBy(studyRoom.id()))
                     .willReturn(1L);
 
             given(participantRepository.save(any()))
@@ -202,7 +202,7 @@ class ParticipateServiceTest {
             given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.countActiveBy(studyRoom.id()))
+            given(participantRepository.countNotDeletedBy(studyRoom.id()))
                     .willReturn(1L);
 
             assertThrows(StudyAlreadyCompletedException.class,
@@ -230,7 +230,7 @@ class ParticipateServiceTest {
             given(studyRoomRepository.findByIdForUpdate(studyRoom.id().value()))
                     .willReturn(Optional.of(studyRoom));
 
-            given(participantRepository.countActiveBy(studyRoom.id()))
+            given(participantRepository.countNotDeletedBy(studyRoom.id()))
                     .willReturn(studyRoom.maxParticipantCount().longValue());
 
             assertThrows(MaxParticipantExceededException.class,

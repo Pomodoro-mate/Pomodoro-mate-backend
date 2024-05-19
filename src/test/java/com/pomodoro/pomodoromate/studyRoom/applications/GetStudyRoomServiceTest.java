@@ -63,7 +63,7 @@ class GetStudyRoomServiceTest {
         given(studyRoomRepository.findById(studyRoomId))
                 .willReturn(Optional.of(studyRoom));
 
-        given(participantRepository.findAllActiveBy(studyRoom.id()))
+        given(participantRepository.findAllNotDeletedBy(studyRoom.id()))
                 .willReturn(List.of(participant));
 
         UserId userId = UserId.of(1L);

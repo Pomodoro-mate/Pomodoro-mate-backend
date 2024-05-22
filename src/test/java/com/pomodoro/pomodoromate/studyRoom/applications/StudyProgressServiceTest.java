@@ -1,6 +1,5 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
-import com.pomodoro.pomodoromate.config.JpaAuditingConfig;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
@@ -18,14 +17,13 @@ import com.pomodoro.pomodoromate.user.models.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;

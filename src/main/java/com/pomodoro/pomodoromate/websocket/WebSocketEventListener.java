@@ -47,36 +47,43 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
         Long participantId = (Long) headerAccessor.getSessionAttributes().get(PARTICIPATE_ID_HEADER);
-        log.info("participantId: " + participantId);
-
-        Participant participant = participantRepository.findById(participantId)
-                .orElseThrow(ParticipantNotFoundException::new);
-
         Long studyRoomId = (Long) headerAccessor.getSessionAttributes().get(STUDY_ROOM_ID_HEADER);
-        log.info("studyRoomId: " + studyRoomId);
 
-        if (participant != null && studyRoomId != null) {
-            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
+        log.info("participantId: {}", participantId);
+        log.info("studyRoomId: {}", studyRoomId);
 
-            if (participant.isDeleted()) {
-                log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
-                log.info("[web socket] - handleWebSocketDisconnectListener 메서드 / 끝");
-                return;
-            }
-
-            participant.markPending();
-            participantRepository.save(participant);
-            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
-
-            taskScheduler.schedule(() -> {
-                CheckPendingParticipantAndDelete(participantId, studyRoomId);
-            }, new Date(System.currentTimeMillis() + 10000));
+        if (participantId == null || studyRoomId == null) {
+            log.warn("ParticipantId or StudyRoomId is missing in session attributes");
+            return;
         }
+
+        handleParticipantDisconnect(participantId, studyRoomId);
 
         log.info("[web socket] - handleWebSocketDisconnectListener 메서드 / 끝");
     }
 
-    private void CheckPendingParticipantAndDelete(Long participantId, Long studyRoomId) {
+    private void handleParticipantDisconnect(Long participantId, Long studyRoomId) {
+        Participant participant = participantRepository.findById(participantId)
+                .orElseThrow(ParticipantNotFoundException::new);
+
+        if (participant.isDeleted()) {
+            log.info("Participant {} is already deleted", participant.id().value());
+            return;
+        }
+
+        participant.pend();
+        participantRepository.save(participant);
+        log.info("participant {} 상태를 PENDING 으로 변경", participant.id().value());
+
+        schedulePendingParticipantCheck(participantId, studyRoomId);
+    }
+
+    private void schedulePendingParticipantCheck(Long participantId, Long studyRoomId) {
+        taskScheduler.schedule(() -> checkPendingParticipantAndDelete(participantId, studyRoomId),
+                new Date(System.currentTimeMillis() + 10000));
+    }
+
+    private void checkPendingParticipantAndDelete(Long participantId, Long studyRoomId) {
         log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 시작");
 
         Participant participant = participantRepository.findById(participantId)
@@ -85,13 +92,13 @@ public class WebSocketEventListener {
         if (participant.isPending()) {
             participant.delete();
             participantRepository.save(participant);
-            log.info("participant: " + participant.id().value() + " 상태를 DELETED로 변경");
+            log.info("participant {} 상태를 DELETED 로 변경", participant.id().value());
 
             Long participantCount = participantRepository.countNotDeletedBy(StudyRoomId.of(studyRoomId));
 
             if (participantCount == 0) {
                 completeStudyRoomService.completeStudy(StudyRoomId.of(studyRoomId));
-                log.info("studyRoom: " + studyRoomId + " 스터디 종료");
+                log.info("studyRoom {} 스터디 종료", studyRoomId);
 
                 log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 끝");
                 return;

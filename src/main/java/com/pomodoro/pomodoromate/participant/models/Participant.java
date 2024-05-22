@@ -2,7 +2,6 @@ package com.pomodoro.pomodoromate.participant.models;
 
 import com.pomodoro.pomodoromate.common.exceptions.AuthorizationException;
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
-import com.pomodoro.pomodoromate.common.models.SessionId;
 import com.pomodoro.pomodoromate.common.models.Status;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
@@ -93,7 +92,7 @@ public class Participant extends BaseEntity {
         this.status = Status.ACTIVE;
     }
 
-    public void markPending() {
+    public void pend() {
         this.status = Status.PENDING;
     }
 

@@ -46,7 +46,7 @@ public class WebSocketHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        if(accessor.getCommand() == StompCommand.SUBSCRIBE) {
+        if (accessor.getCommand() == StompCommand.SUBSCRIBE) {
             handleSubscribeMessage(accessor);
         }
 
@@ -57,7 +57,7 @@ public class WebSocketHandler implements ChannelInterceptor {
         log.info("[web socket] - preSend 메서드 / connect / 시작");
 
         String authorization = accessor.getFirstNativeHeader(AUTHORIZATION_HEADER);
-        log.info("authorization: " + authorization);
+        log.info("authorization: {}", authorization);
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             throw new AuthenticationError();
@@ -67,10 +67,10 @@ public class WebSocketHandler implements ChannelInterceptor {
 
         try {
             UserId userId = jwtUtil.decode(accessToken);
-            log.info("userId: " + userId.value());
+            log.info("userId: {}", userId.value());
 
             Long studyRoomId = Long.valueOf(accessor.getFirstNativeHeader(STUDY_ROOM_ID_HEADER));
-            log.info("studyRoomId: " + studyRoomId);
+            log.info("studyRoomId: {}", studyRoomId);
 
             Optional<StudyRoom> participatingRoom = studyRoomRepository.findParticipatingRoomBy(userId);
 
@@ -94,7 +94,7 @@ public class WebSocketHandler implements ChannelInterceptor {
             attributes.put("ParticipantId", participant.id().value());
             accessor.setSessionAttributes(attributes);
 
-            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
+            log.info("participant: {} : {}", participant.id().value(), participant.status().toString());
 
             participant.activate();
 
@@ -102,7 +102,7 @@ public class WebSocketHandler implements ChannelInterceptor {
 
             studyRoom.validateMaxParticipantExceeded(participantCount - 1);
 
-            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
+            log.info("participant: {} : {}", participant.id().value(), participant.status().toString());
 
             participantRepository.save(participant);
 

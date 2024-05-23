@@ -50,7 +50,7 @@ public class ParticipantController {
             @RequestAttribute UserId userId,
             @PathVariable Long studyRoomId,
             @Validated @RequestBody ParticipateRequestDto requestDto
-            ) {
+    ) {
         ParticipateRequest request = ParticipateRequest.of(requestDto);
 
         Long participantId = participateService.participate(request, userId, StudyRoomId.of(studyRoomId));
@@ -74,6 +74,12 @@ public class ParticipantController {
             @PathVariable Long participantId
     ) {
         leaveStudyService.leaveStudy(userId, StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
+
+        ParticipantSummariesDto participantSummariesDto = getParticipantsService
+                .activeParticipants(StudyRoomId.of(studyRoomId));
+
+        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
+                , participantSummariesDto);
 
         return ResponseEntity.noContent().build();
     }

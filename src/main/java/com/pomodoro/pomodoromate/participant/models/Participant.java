@@ -2,7 +2,6 @@ package com.pomodoro.pomodoromate.participant.models;
 
 import com.pomodoro.pomodoromate.common.exceptions.AuthorizationException;
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
-import com.pomodoro.pomodoromate.common.models.SessionId;
 import com.pomodoro.pomodoromate.common.models.Status;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
@@ -78,10 +77,6 @@ public class Participant extends BaseEntity {
         }
     }
 
-    public void delete() {
-        this.status = Status.DELETED;
-    }
-
     public void validateStudyRoom(StudyRoomId studyRoomId) {
         if (!this.studyRoomId.equals(studyRoomId)) {
             throw new StudyRoomMismatchException();
@@ -97,6 +92,14 @@ public class Participant extends BaseEntity {
         this.status = Status.ACTIVE;
     }
 
+    public void pend() {
+        this.status = Status.PENDING;
+    }
+
+    public void delete() {
+        this.status = Status.DELETED;
+    }
+
     public void validateActive() {
         if (!isActive()) {
             throw new ParticipantNotInRoomException();
@@ -105,5 +108,13 @@ public class Participant extends BaseEntity {
 
     private boolean isActive() {
         return this.status.equals(Status.ACTIVE);
+    }
+
+    public boolean isDeleted() {
+        return this.status.equals(Status.DELETED);
+    }
+
+    public boolean isPending() {
+        return this.status.equals(Status.PENDING);
     }
 }

@@ -37,7 +37,7 @@ class GetParticipantsServiceTest {
                 .userInfo(new UserInfo())
                 .build();
 
-        given(participantRepository.findAllActiveBy(studyRoomId))
+        given(participantRepository.findAllNotDeletedBy(studyRoomId))
                 .willReturn(List.of(participant));
 
         ParticipantSummariesDto participantSummariesDto = getParticipantsService

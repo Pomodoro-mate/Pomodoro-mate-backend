@@ -76,7 +76,7 @@ class ParticipateServiceIntegrationTest {
 
         latch.await();
 
-        Long participantCount = participantRepository.countActiveBy(studyRoom.id());
+        Long participantCount = participantRepository.countNotDeletedBy(studyRoom.id());
 
         assertThat(participantCount).isEqualTo(8L);
     }

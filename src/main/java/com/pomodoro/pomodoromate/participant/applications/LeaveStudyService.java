@@ -49,7 +49,7 @@ public class LeaveStudyService {
 
         participant.delete();
 
-        Long participantCount = participantRepository.countActiveBy(studyRoomId);
+        Long participantCount = participantRepository.countNotDeletedBy(studyRoomId);
 
         if (participantCount == 0) {
             completeStudyRoomService.completeStudy(studyRoomId);
@@ -63,7 +63,7 @@ public class LeaveStudyService {
 
         participant.delete();
 
-        Long participantCount = participantRepository.countActiveBy(studyRoomId);
+        Long participantCount = participantRepository.countNotDeletedBy(studyRoomId);
 
         if (participantCount == 0) {
             completeStudyRoomService.completeStudy(studyRoomId);

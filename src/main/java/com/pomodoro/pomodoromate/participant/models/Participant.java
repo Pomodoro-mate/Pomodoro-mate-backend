@@ -2,9 +2,9 @@ package com.pomodoro.pomodoromate.participant.models;
 
 import com.pomodoro.pomodoromate.common.exceptions.AuthorizationException;
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
-import com.pomodoro.pomodoromate.common.models.SessionId;
 import com.pomodoro.pomodoromate.common.models.Status;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
+import com.pomodoro.pomodoromate.participant.exceptions.ForbiddenStudyHostActionException;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
@@ -105,5 +105,11 @@ public class Participant extends BaseEntity {
 
     private boolean isActive() {
         return this.status.equals(Status.ACTIVE);
+    }
+
+    public void validateHost(ParticipantId hostId) {
+        if (!this.id.equals(hostId.value())) {
+            throw new ForbiddenStudyHostActionException();
+        }
     }
 }

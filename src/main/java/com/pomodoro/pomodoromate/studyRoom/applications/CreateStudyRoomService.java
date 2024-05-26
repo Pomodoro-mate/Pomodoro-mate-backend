@@ -1,12 +1,10 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
 import com.pomodoro.pomodoromate.participant.applications.LeaveStudyService;
-import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.ParticipatingRoomExistsException;
 import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
-import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.UserId;

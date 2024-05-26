@@ -27,7 +27,8 @@ public class GoogleLoginService {
 
     public GoogleLoginService(
             UserRepository userRepository,
-            IssueTokenService issueTokenService, GoogleUtil googleUtil
+            IssueTokenService issueTokenService,
+            GoogleUtil googleUtil
     ) {
         this.userRepository = userRepository;
         this.issueTokenService = issueTokenService;

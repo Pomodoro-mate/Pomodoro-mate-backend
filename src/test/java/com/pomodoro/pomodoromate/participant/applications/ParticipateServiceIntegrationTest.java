@@ -1,6 +1,8 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
+import com.pomodoro.pomodoromate.participant.models.Participant;
+import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.MaxParticipantCount;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;

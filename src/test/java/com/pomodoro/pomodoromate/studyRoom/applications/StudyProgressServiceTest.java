@@ -66,6 +66,8 @@ class StudyProgressServiceTest {
                 .userId(userId)
                 .build();
 
+        studyRoom.assignHost(participant.id());
+
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
@@ -119,6 +121,8 @@ class StudyProgressServiceTest {
                 .userId(userId)
                 .build();
 
+        studyRoom.assignHost(participant.id());
+
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
@@ -145,6 +149,8 @@ class StudyProgressServiceTest {
                 .studyRoomId(studyRoom.id())
                 .userId(userId)
                 .build();
+
+        studyRoom.assignHost(participant.id());
 
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));

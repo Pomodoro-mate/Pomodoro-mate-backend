@@ -1,19 +1,14 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
+import com.pomodoro.pomodoromate.participant.exceptions.ForbiddenStudyHostActionException;
+import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -28,14 +23,14 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class StudyRoom {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Embedded
     private StudyRoomInfo info;
 
-//    @Column(name = "hostId")
-//    private UserId hostId;
+    @AttributeOverride(name = "value", column = @Column(name = "hostId"))
+    private ParticipantId hostId;
 
 //    private StudyRoomPassword password;
 
@@ -58,7 +53,6 @@ public class StudyRoom {
     public StudyRoom(Long id, StudyRoomInfo info, MaxParticipantCount maxParticipantCount, TimeSet timeSet) {
         this.id = id;
         this.info = info;
-//        this.hostId = hostId;
 //        this.status = status;
         this.maxParticipantCount = maxParticipantCount;
         this.timeSet = timeSet;
@@ -83,7 +77,7 @@ public class StudyRoom {
 //            throw new IncorrectStudyRoomPasswordException();
 //        }
 
-//    }
+    //    }
     public void validateIncomplete() {
         if (isStep(Step.COMPLETED)) {
             throw new StudyAlreadyCompletedException();
@@ -138,7 +132,7 @@ public class StudyRoom {
 //    public StudyRoomPassword password() {
 //        return password;
 
-//    }
+    //    }
     public Step step() {
         return step;
     }
@@ -171,5 +165,15 @@ public class StudyRoom {
     public void update(StudyRoomInfo info, TimeSet timeSet) {
         this.info = info;
         this.timeSet = timeSet;
+    }
+
+    public void assignHost(ParticipantId participantId) {
+        this.hostId = participantId;
+    }
+
+    public void validateHost(ParticipantId hostId) {
+        if (!this.hostId.value().equals(hostId.value())) {
+            throw new ForbiddenStudyHostActionException();
+        }
     }
 }

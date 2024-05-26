@@ -50,7 +50,7 @@ public class ParticipateService {
 
         studyRoom.validateMaxParticipantExceeded(participantCount);
 
-        return createOrUpdateParticipant(userId, studyRoomId, user, studyRoom);
+        return createOrUpdateParticipant(userId, studyRoomId, user, studyRoom).id().value();
     }
 
     @Transactional
@@ -67,7 +67,11 @@ public class ParticipateService {
 
         studyRoom.validateMaxParticipantExceeded(participantCount);
 
-        return createOrUpdateParticipant(userId, studyRoomId, user, studyRoom);
+        Participant createdParticipant = createOrUpdateParticipant(userId, studyRoomId, user, studyRoom);
+
+        studyRoom.assignHost(createdParticipant.id());
+
+        return createdParticipant.id().value();
     }
 
     private void checkParticipatingRoom(UserId userId, boolean isForce) {
@@ -83,13 +87,13 @@ public class ParticipateService {
         }
     }
 
-    private Long createOrUpdateParticipant(UserId userId, StudyRoomId studyRoomId, User user, StudyRoom studyRoom) {
+    private Participant createOrUpdateParticipant(UserId userId, StudyRoomId studyRoomId, User user, StudyRoom studyRoom) {
         Optional<Participant> existingParticipant = participantRepository.findBy(userId, studyRoomId);
 
         if (existingParticipant.isPresent()) {
             existingParticipant.get().activate();
 
-            return existingParticipant.get().id().value();
+            return existingParticipant.get();
         }
 
         Participant participant = Participant.builder()
@@ -100,6 +104,6 @@ public class ParticipateService {
 
         Participant saved = participantRepository.save(participant);
 
-        return saved.id().value();
+        return saved;
     }
 }

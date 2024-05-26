@@ -68,6 +68,8 @@ class EditStudyRoomServiceTest {
                     .userId(user.id())
                     .build();
 
+            studyRoom.assignHost(participant.id());
+
             EditStudyRoomRequest request = EditStudyRoomRequest.builder()
                     .info(editedInfo)
                     .participantId(participant.id())

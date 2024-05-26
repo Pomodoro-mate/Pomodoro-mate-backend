@@ -172,7 +172,7 @@ public class StudyRoom {
     }
 
     public void validateHost(ParticipantId hostId) {
-        if (!this.hostId.equals(hostId)) {
+        if (!this.hostId.value().equals(hostId.value())) {
             throw new ForbiddenStudyHostActionException();
         }
     }

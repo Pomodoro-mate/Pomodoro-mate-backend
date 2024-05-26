@@ -5,6 +5,7 @@ import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
 import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
 import com.pomodoro.pomodoromate.auth.config.JwtConfig;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
+import com.pomodoro.pomodoromate.auth.utils.GoogleUtil;
 import com.pomodoro.pomodoromate.config.HttpConfig;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import jakarta.servlet.http.Cookie;
@@ -34,10 +35,13 @@ class AuthControllerTest {
     private GuestLoginService guestLoginService;
 
     @MockBean
+    private IssueTokenService issueTokenService;
+
+    @MockBean
     private GoogleLoginService googleLoginService;
 
     @MockBean
-    private IssueTokenService issueTokenService;
+    private GoogleUtil googleUtil;
 
     @Test
     void guestLogin() throws Exception {
@@ -80,7 +84,7 @@ class AuthControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/guest")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{" +
-                                "   \"nickname\": \"" + "닉".repeat(17) +"\"" +
+                                "   \"nickname\": \"" + "닉".repeat(17) + "\"" +
                                 "}"))
                 .andExpect(status().isBadRequest());
     }

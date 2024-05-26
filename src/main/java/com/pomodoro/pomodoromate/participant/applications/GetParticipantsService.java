@@ -19,7 +19,7 @@ public class GetParticipantsService {
 
     @Transactional(readOnly = true)
     public ParticipantSummariesDto activeParticipants(StudyRoomId studyRoomId) {
-        List<Participant> participants = participantRepository.findAllActiveBy(studyRoomId);
+        List<Participant> participants = participantRepository.findAllNotDeletedBy(studyRoomId);
 
         return new ParticipantSummariesDto(participants.stream()
                 .map(Participant::toSummaryDto).toList());

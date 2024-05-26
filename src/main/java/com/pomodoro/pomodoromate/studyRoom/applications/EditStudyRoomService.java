@@ -40,7 +40,8 @@ public class EditStudyRoomService {
         participant.validateStudyRoom(studyRoomId);
         participant.validateParticipant(userId);
         participant.validateActive();
-        participant.validateHost(studyRoom.hostId());
+
+        studyRoom.validateHost(participant.id());
 
         studyRoom.update(
                 request.getInfo(),

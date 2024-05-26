@@ -43,8 +43,7 @@ public class StudyProgressService {
 
         participant.validateActive();
 
-        participant.validateHost(studyRoom.hostId());
-
+        studyRoom.validateHost(participant.id());
         studyRoom.validateCurrentStep(step);
         studyRoom.validateIncomplete();
 

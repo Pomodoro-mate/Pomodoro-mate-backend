@@ -106,10 +106,4 @@ public class Participant extends BaseEntity {
     private boolean isActive() {
         return this.status.equals(Status.ACTIVE);
     }
-
-    public void validateHost(ParticipantId hostId) {
-        if (!this.id.equals(hostId.value())) {
-            throw new ForbiddenStudyHostActionException();
-        }
-    }
 }

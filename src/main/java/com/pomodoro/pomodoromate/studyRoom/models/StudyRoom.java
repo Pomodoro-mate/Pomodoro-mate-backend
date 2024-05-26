@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
+import com.pomodoro.pomodoromate.participant.exceptions.ForbiddenStudyHostActionException;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
@@ -49,10 +50,9 @@ public class StudyRoom {
     private LocalDateTime updateAt;
 
     @Builder
-    public StudyRoom(Long id, StudyRoomInfo info, MaxParticipantCount maxParticipantCount, TimeSet timeSet, ParticipantId hostId) {
+    public StudyRoom(Long id, StudyRoomInfo info, MaxParticipantCount maxParticipantCount, TimeSet timeSet) {
         this.id = id;
         this.info = info;
-        this.hostId = hostId;
 //        this.status = status;
         this.maxParticipantCount = maxParticipantCount;
         this.timeSet = timeSet;
@@ -171,7 +171,9 @@ public class StudyRoom {
         this.hostId = participantId;
     }
 
-    public ParticipantId hostId() {
-        return hostId;
+    public void validateHost(ParticipantId hostId) {
+        if (!this.hostId.equals(hostId)) {
+            throw new ForbiddenStudyHostActionException();
+        }
     }
 }

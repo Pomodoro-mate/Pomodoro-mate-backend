@@ -125,10 +125,10 @@ public class StudyRoom {
         return info;
     }
 
-//    public UserId hostId() {
-//        return hostId;
+    public ParticipantId hostId() {
+        return hostId;
+    }
 
-//    }
 //    public StudyRoomPassword password() {
 //        return password;
 
@@ -175,5 +175,9 @@ public class StudyRoom {
         if (!this.hostId.value().equals(hostId.value())) {
             throw new ForbiddenStudyHostActionException();
         }
+    }
+
+    public void excludeHost() {
+        this.hostId = null;
     }
 }

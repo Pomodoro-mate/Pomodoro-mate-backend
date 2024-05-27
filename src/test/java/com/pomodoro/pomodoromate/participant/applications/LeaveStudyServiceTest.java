@@ -8,6 +8,7 @@ import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.applications.CompleteStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
@@ -24,8 +25,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -35,6 +36,7 @@ class LeaveStudyServiceTest {
     private StudyRoomRepository studyRoomRepository;
     private CompleteStudyRoomService completeStudyRoomService;
     private LeaveStudyService leaveStudyService;
+    private StudyRoomHostService studyRoomHostService;
 
     @BeforeEach
     void setUp() {
@@ -42,11 +44,13 @@ class LeaveStudyServiceTest {
         userRepository = mock(UserRepository.class);
         studyRoomRepository = mock(StudyRoomRepository.class);
         completeStudyRoomService = mock(CompleteStudyRoomService.class);
+        studyRoomHostService = mock(StudyRoomHostService.class);
         leaveStudyService = new LeaveStudyService(
                 participantRepository,
                 userRepository,
                 studyRoomRepository,
-                completeStudyRoomService);
+                completeStudyRoomService,
+                studyRoomHostService);
     }
 
     @Nested
@@ -77,6 +81,8 @@ class LeaveStudyServiceTest {
 
             given(participantRepository.findById(participant.id().value()))
                     .willReturn(Optional.of(participant));
+
+            studyRoom.assignHost(participant.id());
 
             assertDoesNotThrow(() -> leaveStudyService.leaveStudy(user.id(), studyRoom.id(), participant.id()));
 

@@ -27,7 +27,7 @@ public class StudyRoomHostService {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
-        Participant mostRecentParticipant = participantRepository.findMostRecentByStudyRoomId(studyRoomId)
+        Participant mostRecentParticipant = participantRepository.findMostRecentBy(studyRoomId)
                 .orElseThrow(ParticipantNotFoundException::new);
 
         studyRoom.validateHost(hostId);
@@ -42,14 +42,12 @@ public class StudyRoomHostService {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
+        studyRoom.validateIncomplete();
+
         Participant participant = participantRepository.findById(participantId.value())
                 .orElseThrow(ParticipantNotFoundException::new);
 
-        studyRoom.validateIncomplete();
-
-        if (studyRoom.hostId() != null && !studyRoom.hostId().equals(participantId)) {
-            throw new IllegalArgumentException("방장이 존재합니다.");
-        }
+        studyRoom.checkHostExists(participant.id());
 
         studyRoom.assignHost(participant.id());
     }

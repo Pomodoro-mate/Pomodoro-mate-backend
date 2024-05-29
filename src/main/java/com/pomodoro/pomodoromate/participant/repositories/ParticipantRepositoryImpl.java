@@ -56,14 +56,14 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
     }
 
     @Override
-    public Optional<Participant> findMostRecentByStudyRoomId(StudyRoomId studyRoomId) {
+    public Optional<Participant> findMostRecentBy(StudyRoomId studyRoomId) {
         QParticipant participant = QParticipant.participant;
 
         return Optional.ofNullable(queryFactory
                 .selectFrom(participant)
                 .where(participant.studyRoomId.eq(studyRoomId)
                         .and(participant.status.ne(Status.DELETED)))
-                .orderBy(participant.joinedAt.desc())
+                .orderBy(participant.joinedAt.asc())
                 .fetchFirst());
     }
 }

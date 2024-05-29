@@ -5,6 +5,7 @@ import com.pomodoro.pomodoromate.participant.exceptions.ForbiddenStudyHostAction
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.HostExistsException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
@@ -179,5 +180,11 @@ public class StudyRoom {
 
     public void excludeHost() {
         this.hostId = null;
+    }
+
+    public void checkHostExists(ParticipantId participantId) {
+        if (hostId() != null && !hostId().equals(participantId)) {
+            throw new HostExistsException();
+        }
     }
 }

@@ -14,5 +14,5 @@ public interface ParticipantRepositoryQueryDsl {
 
     Optional<Participant> findBy(UserId userId, StudyRoomId studyRoomId);
 
-    Optional<Participant> findMostRecentByStudyRoomId(StudyRoomId studyRoomId);
+    Optional<Participant> findMostRecentBy(StudyRoomId studyRoomId);
 }

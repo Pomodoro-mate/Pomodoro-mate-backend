@@ -1,7 +1,9 @@
 package com.pomodoro.pomodoromate.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pomodoro.pomodoromate.auth.filters.JwtAuthenticationFilter;
 import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
+import com.pomodoro.pomodoromate.common.filters.HttpLoggingFilter;
 import jakarta.servlet.Filter;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +23,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfig {
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper;
 
-    public SecurityConfig(JwtUtil jwtUtil) {
+    public SecurityConfig(JwtUtil jwtUtil, ObjectMapper objectMapper) {
         this.jwtUtil = jwtUtil;
+        this.objectMapper = objectMapper;
     }
 
     @Bean
@@ -32,6 +36,7 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.csrf(AbstractHttpConfigurer::disable);
         http.addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class);
+        http.addFilterBefore(httpLoggingFilter(), JwtAuthenticationFilter.class);
         return http.build();
     }
 
@@ -41,11 +46,18 @@ public class SecurityConfig {
     }
 
     @Bean
+    public Filter httpLoggingFilter() {
+        return new HttpLoggingFilter(objectMapper);
+    }
+
+    @Bean
     public WebSecurityCustomizer ignoringCustomizer() {
         return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/**"))
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/token"))
                 .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/logout"))
+                .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.DELETE, "/api/logout"))
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui/**"))
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"));
     }
 

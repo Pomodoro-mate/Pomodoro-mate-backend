@@ -182,8 +182,8 @@ public class StudyRoom {
         this.hostId = null;
     }
 
-    public void checkHostExists(ParticipantId participantId) {
-        if (hostId() != null && !hostId().equals(participantId)) {
+    public void checkHostExists() {
+        if (hostId() != null) {
             throw new HostExistsException();
         }
     }

@@ -47,7 +47,7 @@ public class StudyRoomHostService {
         Participant participant = participantRepository.findById(participantId.value())
                 .orElseThrow(ParticipantNotFoundException::new);
 
-        studyRoom.checkHostExists(participant.id());
+        studyRoom.checkHostExists();
 
         studyRoom.assignHost(participant.id());
     }

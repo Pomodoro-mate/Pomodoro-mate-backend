@@ -105,7 +105,6 @@ public class ParticipateService {
                 .studyRoomId(studyRoom.id())
                 .userId(user.id())
                 .userInfo(user.info())
-                .joinedAt(LocalDateTime.now())
                 .build();
 
         Participant saved = participantRepository.save(participant);

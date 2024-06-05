@@ -53,14 +53,15 @@ public class LeaveStudyService {
 
         participant.delete();
 
-        if (participant.isHost(studyRoom.hostId().value())) {
-            studyRoomHostService.transferHost(studyRoomId, participantId);
-        }
-
         Long participantCount = participantRepository.countNotDeletedBy(studyRoomId);
 
         if (participantCount == 0) {
             completeStudyRoomService.completeStudy(studyRoomId);
+            return;
+        }
+
+        if (participant.isHost(studyRoom.hostId().value())) {
+            studyRoomHostService.transferHost(studyRoomId, participantId);
         }
     }
 
@@ -69,12 +70,19 @@ public class LeaveStudyService {
         Participant participant = participantRepository.findBy(userId, studyRoomId)
                 .orElseThrow(ParticipantNotFoundException::new);
 
+        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
+                .orElseThrow(StudyRoomNotFoundException::new);
+
         participant.delete();
 
         Long participantCount = participantRepository.countNotDeletedBy(studyRoomId);
 
         if (participantCount == 0) {
             completeStudyRoomService.completeStudy(studyRoomId);
+        }
+
+        if (participant.isHost(studyRoom.hostId().value())) {
+            studyRoomHostService.transferHost(studyRoomId, participant.id());
         }
     }
 }

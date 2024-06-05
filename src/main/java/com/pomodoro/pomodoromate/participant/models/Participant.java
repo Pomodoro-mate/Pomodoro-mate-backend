@@ -40,13 +40,13 @@ public class Participant extends BaseEntity {
     private LocalDateTime joinedAt;
 
     @Builder
-    public Participant(Long id, StudyRoomId studyRoomId, UserId userId, UserInfo userInfo, LocalDateTime joinedAt) {
+    public Participant(Long id, StudyRoomId studyRoomId, UserId userId, UserInfo userInfo) {
         this.id = id;
         this.studyRoomId = studyRoomId;
         this.userId = userId;
         this.userInfo = userInfo;
         this.status = Status.ACTIVE;
-        this.joinedAt = joinedAt;
+        this.joinedAt = LocalDateTime.now();
     }
 
     public ParticipantId id() {

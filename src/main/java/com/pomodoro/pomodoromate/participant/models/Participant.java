@@ -81,9 +81,9 @@ public class Participant extends BaseEntity {
         }
     }
 
-    public ParticipantSummaryDto toSummaryDto() {
+    public ParticipantSummaryDto toSummaryDto(boolean isHost) {
         return new ParticipantSummaryDto(id, userId.value(),
-                userInfo.nickname(), userInfo.imageUrl());
+                userInfo.nickname(), userInfo.imageUrl(), isHost);
     }
 
     public void activate() {

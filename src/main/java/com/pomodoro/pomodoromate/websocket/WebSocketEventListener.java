@@ -100,9 +100,6 @@ public class WebSocketEventListener {
         Participant participant = participantRepository.findById(participantId)
                 .orElseThrow(ParticipantNotFoundException::new);
 
-        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
-                .orElseThrow(StudyRoomNotFoundException::new);
-
         if (participant.isPending()) {
             participant.delete();
             participantRepository.save(participant);
@@ -117,10 +114,13 @@ public class WebSocketEventListener {
                 log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 끝");
                 return;
             }
-        }
 
-        if (participant.isHost(studyRoom.hostId().value())) {
-            studyRoomHostService.transferHost(StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
+            StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
+                    .orElseThrow(StudyRoomNotFoundException::new);
+
+            if (participant.isHost(studyRoom.hostId().value())) {
+                studyRoomHostService.transferHost(StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
+            }
         }
 
         ParticipantSummariesDto participantSummariesDto = getParticipantsService

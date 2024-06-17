@@ -87,6 +87,9 @@ public class Participant extends BaseEntity {
     }
 
     public void activate() {
+        if (!this.isActive() && !this.isPending()) {
+            this.joinedAt = LocalDateTime.now();
+        }
         this.status = Status.ACTIVE;
     }
 

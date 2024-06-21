@@ -87,11 +87,11 @@ public class Participant extends BaseEntity {
     }
 
     public void activate() {
-        this.status = Status.ACTIVE;
-
         if (this.isDeleted()) {
             this.joinedAt = LocalDateTime.now();
         }
+
+        this.status = Status.ACTIVE;
     }
 
     public void pend() {

@@ -4,9 +4,14 @@ import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotFoundException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
+import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.applications.CompleteStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
+import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
+import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,17 +33,23 @@ public class WebSocketEventListener {
     private final ParticipantRepository participantRepository;
     private final CompleteStudyRoomService completeStudyRoomService;
     private final TaskScheduler taskScheduler;
+    private final StudyRoomHostService studyRoomHostService;
+    private final StudyRoomRepository studyRoomRepository;
 
     public WebSocketEventListener(SimpMessagingTemplate messagingTemplate,
                                   GetParticipantsService getParticipantsService,
                                   ParticipantRepository participantRepository,
                                   CompleteStudyRoomService completeStudyRoomService,
-                                  TaskScheduler taskScheduler) {
+                                  TaskScheduler taskScheduler,
+                                  StudyRoomHostService studyRoomHostService,
+                                  StudyRoomRepository studyRoomRepository) {
         this.messagingTemplate = messagingTemplate;
         this.getParticipantsService = getParticipantsService;
         this.participantRepository = participantRepository;
         this.completeStudyRoomService = completeStudyRoomService;
         this.taskScheduler = taskScheduler;
+        this.studyRoomHostService = studyRoomHostService;
+        this.studyRoomRepository = studyRoomRepository;
     }
 
     @EventListener
@@ -102,6 +113,13 @@ public class WebSocketEventListener {
 
                 log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 끝");
                 return;
+            }
+
+            StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
+                    .orElseThrow(StudyRoomNotFoundException::new);
+
+            if (participant.isHost(studyRoom.hostId().value())) {
+                studyRoomHostService.transferHost(StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
             }
         }
 

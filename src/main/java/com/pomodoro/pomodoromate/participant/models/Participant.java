@@ -4,23 +4,17 @@ import com.pomodoro.pomodoromate.common.exceptions.AuthorizationException;
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.common.models.Status;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
-import com.pomodoro.pomodoromate.participant.exceptions.ForbiddenStudyHostActionException;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomMismatchException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import com.pomodoro.pomodoromate.user.models.UserInfo;
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,6 +37,8 @@ public class Participant extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private LocalDateTime joinedAt;
+
     @Builder
     public Participant(Long id, StudyRoomId studyRoomId, UserId userId, UserInfo userInfo) {
         this.id = id;
@@ -50,6 +46,7 @@ public class Participant extends BaseEntity {
         this.userId = userId;
         this.userInfo = userInfo;
         this.status = Status.ACTIVE;
+        this.joinedAt = LocalDateTime.now();
     }
 
     public ParticipantId id() {
@@ -84,12 +81,16 @@ public class Participant extends BaseEntity {
         }
     }
 
-    public ParticipantSummaryDto toSummaryDto() {
+    public ParticipantSummaryDto toSummaryDto(boolean isHost) {
         return new ParticipantSummaryDto(id, userId.value(),
-                userInfo.nickname(), userInfo.imageUrl());
+                userInfo.nickname(), userInfo.imageUrl(), isHost);
     }
 
     public void activate() {
+        if (this.isDeleted()) {
+            this.joinedAt = LocalDateTime.now();
+        }
+
         this.status = Status.ACTIVE;
     }
 
@@ -117,5 +118,9 @@ public class Participant extends BaseEntity {
 
     public boolean isPending() {
         return this.status.equals(Status.PENDING);
+    }
+
+    public boolean isHost(Long hostId) {
+        return this.id.equals(hostId);
     }
 }

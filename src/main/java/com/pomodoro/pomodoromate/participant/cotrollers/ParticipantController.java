@@ -8,6 +8,7 @@ import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequestDto;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateResponseDto;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import io.swagger.v3.oas.annotations.Operation;

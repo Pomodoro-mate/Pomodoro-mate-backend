@@ -8,12 +8,14 @@ import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.UserId;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class CreateStudyRoomService {
     private final StudyRoomRepository studyRoomRepository;

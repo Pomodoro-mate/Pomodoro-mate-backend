@@ -4,6 +4,7 @@ import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.ParticipatingRoomExistsException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
@@ -34,6 +35,7 @@ class ParticipateServiceTest {
     private StudyRoomRepository studyRoomRepository;
     private LeaveStudyService leaveStudyService;
     private ParticipateService participateService;
+    private StudyRoomHostService studyRoomHostService;
 
     @BeforeEach
     void setUp() {
@@ -41,11 +43,13 @@ class ParticipateServiceTest {
         userRepository = mock(UserRepository.class);
         studyRoomRepository = mock(StudyRoomRepository.class);
         leaveStudyService = mock(LeaveStudyService.class);
+        studyRoomHostService = mock(StudyRoomHostService.class);
         participateService = new ParticipateService(
                 participantRepository,
                 userRepository,
                 studyRoomRepository,
-                leaveStudyService);
+                leaveStudyService,
+                studyRoomHostService);
     }
 
     @Nested

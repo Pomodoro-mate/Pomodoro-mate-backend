@@ -60,6 +60,8 @@ class GetStudyRoomServiceTest {
                 .userInfo(user.info())
                 .build();
 
+        studyRoom.assignHost(participant.id());
+
         given(studyRoomRepository.findById(studyRoomId))
                 .willReturn(Optional.of(studyRoom));
 

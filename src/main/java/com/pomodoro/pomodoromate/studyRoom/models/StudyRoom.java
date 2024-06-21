@@ -5,6 +5,7 @@ import com.pomodoro.pomodoromate.participant.exceptions.ForbiddenStudyHostAction
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.HostExistsException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
@@ -23,7 +24,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class StudyRoom {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Embedded
@@ -125,10 +126,10 @@ public class StudyRoom {
         return info;
     }
 
-//    public UserId hostId() {
-//        return hostId;
+    public ParticipantId hostId() {
+        return hostId;
+    }
 
-//    }
 //    public StudyRoomPassword password() {
 //        return password;
 
@@ -174,6 +175,16 @@ public class StudyRoom {
     public void validateHost(ParticipantId hostId) {
         if (!this.hostId.value().equals(hostId.value())) {
             throw new ForbiddenStudyHostActionException();
+        }
+    }
+
+    public void excludeHost() {
+        this.hostId = null;
+    }
+
+    public void checkHostExists() {
+        if (hostId() != null) {
+            throw new HostExistsException();
         }
     }
 }

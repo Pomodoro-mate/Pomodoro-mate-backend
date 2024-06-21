@@ -13,4 +13,6 @@ public interface ParticipantRepositoryQueryDsl {
     List<Participant> findAllNotDeletedBy(StudyRoomId id);
 
     Optional<Participant> findBy(UserId userId, StudyRoomId studyRoomId);
+
+    Optional<Participant> findMostRecentBy(StudyRoomId studyRoomId);
 }

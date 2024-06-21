@@ -54,4 +54,16 @@ public class ParticipantRepositoryImpl implements ParticipantRepositoryQueryDsl{
                         participant.userId.eq(userId)))
                 .fetchOne());
     }
+
+    @Override
+    public Optional<Participant> findMostRecentBy(StudyRoomId studyRoomId) {
+        QParticipant participant = QParticipant.participant;
+
+        return Optional.ofNullable(queryFactory
+                .selectFrom(participant)
+                .where(participant.studyRoomId.eq(studyRoomId)
+                        .and(participant.status.ne(Status.DELETED)))
+                .orderBy(participant.joinedAt.asc())
+                .fetchFirst());
+    }
 }

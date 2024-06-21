@@ -1,9 +1,10 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
+import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
-import com.pomodoro.pomodoromate.auth.exceptions.UnauthorizedException;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.ParticipatingRoomExistsException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
@@ -15,6 +16,7 @@ import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -23,15 +25,18 @@ public class ParticipateService {
     private final UserRepository userRepository;
     private final StudyRoomRepository studyRoomRepository;
     private final LeaveStudyService leaveStudyService;
+    private final StudyRoomHostService studyRoomHostService;
 
     public ParticipateService(ParticipantRepository participantRepository,
                               UserRepository userRepository,
                               StudyRoomRepository studyRoomRepository,
-                              LeaveStudyService leaveStudyService) {
+                              LeaveStudyService leaveStudyService,
+                              StudyRoomHostService studyRoomHostService) {
         this.participantRepository = participantRepository;
         this.userRepository = userRepository;
         this.studyRoomRepository = studyRoomRepository;
         this.leaveStudyService = leaveStudyService;
+        this.studyRoomHostService = studyRoomHostService;
     }
 
     @Transactional
@@ -69,7 +74,7 @@ public class ParticipateService {
 
         Participant createdParticipant = createOrUpdateParticipant(userId, studyRoomId, user, studyRoom);
 
-        studyRoom.assignHost(createdParticipant.id());
+        studyRoomHostService.assignHost(createdParticipant.id(), studyRoomId);
 
         return createdParticipant.id().value();
     }

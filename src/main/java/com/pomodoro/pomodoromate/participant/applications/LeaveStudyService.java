@@ -6,6 +6,7 @@ import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.applications.CompleteStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
@@ -22,15 +23,18 @@ public class LeaveStudyService {
     private final UserRepository userRepository;
     private final StudyRoomRepository studyRoomRepository;
     private final CompleteStudyRoomService completeStudyRoomService;
+    private final StudyRoomHostService studyRoomHostService;
 
     public LeaveStudyService(ParticipantRepository participantRepository,
                              UserRepository userRepository,
                              StudyRoomRepository studyRoomRepository,
-                             CompleteStudyRoomService completeStudyRoomService) {
+                             CompleteStudyRoomService completeStudyRoomService,
+                             StudyRoomHostService studyRoomHostService) {
         this.participantRepository = participantRepository;
         this.userRepository = userRepository;
         this.studyRoomRepository = studyRoomRepository;
         this.completeStudyRoomService = completeStudyRoomService;
+        this.studyRoomHostService = studyRoomHostService;
     }
 
     @Transactional
@@ -53,6 +57,11 @@ public class LeaveStudyService {
 
         if (participantCount == 0) {
             completeStudyRoomService.completeStudy(studyRoomId);
+            return;
+        }
+
+        if (participant.isHost(studyRoom.hostId().value())) {
+            studyRoomHostService.transferHost(studyRoomId, participantId);
         }
     }
 
@@ -61,12 +70,19 @@ public class LeaveStudyService {
         Participant participant = participantRepository.findBy(userId, studyRoomId)
                 .orElseThrow(ParticipantNotFoundException::new);
 
+        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
+                .orElseThrow(StudyRoomNotFoundException::new);
+
         participant.delete();
 
         Long participantCount = participantRepository.countNotDeletedBy(studyRoomId);
 
         if (participantCount == 0) {
             completeStudyRoomService.completeStudy(studyRoomId);
+        }
+
+        if (participant.isHost(studyRoom.hostId().value())) {
+            studyRoomHostService.transferHost(studyRoomId, participant.id());
         }
     }
 }

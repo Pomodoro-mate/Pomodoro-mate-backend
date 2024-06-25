@@ -8,6 +8,7 @@ import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
+import com.pomodoro.pomodoromate.user.models.UserId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ public class StudyRoomHostService {
     }
 
     @Transactional
-    public void transferHost(StudyRoomId studyRoomId, ParticipantId hostId) {
+    public void autoTransferHost(StudyRoomId studyRoomId, ParticipantId hostId) {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
@@ -35,6 +36,24 @@ public class StudyRoomHostService {
         studyRoom.excludeHost();
 
         assignHost(mostRecentParticipant.id(), studyRoomId);
+    }
+
+    @Transactional
+    public void transferHost(StudyRoomId studyRoomId, UserId userId, ParticipantId participantId) {
+        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
+                .orElseThrow(StudyRoomNotFoundException::new);
+
+        Participant hostParticipant = participantRepository.findBy(userId, studyRoomId)
+                .orElseThrow(ParticipantNotFoundException::new);
+
+        Participant newHostParticipant = participantRepository.findBy(participantId)
+                .orElseThrow(ParticipantNotFoundException::new);
+
+        studyRoom.validateHost(hostParticipant.id());
+
+        studyRoom.excludeHost();
+
+        assignHost(newHostParticipant.id(), studyRoomId);
     }
 
     @Transactional

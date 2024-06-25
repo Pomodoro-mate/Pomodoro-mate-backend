@@ -61,7 +61,7 @@ public class LeaveStudyService {
         }
 
         if (participant.isHost(studyRoom.hostId().value())) {
-            studyRoomHostService.transferHost(studyRoomId, participantId);
+            studyRoomHostService.autoTransferHost(studyRoomId, participantId);
         }
     }
 
@@ -82,7 +82,7 @@ public class LeaveStudyService {
         }
 
         if (participant.isHost(studyRoom.hostId().value())) {
-            studyRoomHostService.transferHost(studyRoomId, participant.id());
+            studyRoomHostService.autoTransferHost(studyRoomId, participant.id());
         }
     }
 }

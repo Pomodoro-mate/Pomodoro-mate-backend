@@ -6,6 +6,7 @@ import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService;
 import com.pomodoro.pomodoromate.participant.applications.LeaveStudyService;
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -49,11 +51,21 @@ class ParticipantControllerTest {
 
         Long studyRoomId = 1L;
 
-        given(participateService.participate(userId, StudyRoomId.of(studyRoomId)))
+        ParticipateRequest request = ParticipateRequest.builder()
+                .isForce(false)
+                .build();
+
+        given(participateService.participate(request, userId, StudyRoomId.of(studyRoomId)))
                 .willReturn(1L);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/studyrooms/" + studyRoomId + "/participants")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "isForce": "false"
+                                }
+                                """))
                 .andExpect(status().isCreated());
     }
 

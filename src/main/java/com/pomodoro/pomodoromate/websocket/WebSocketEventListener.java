@@ -4,15 +4,23 @@ import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotFoundException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
+import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.applications.CompleteStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
+import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
+import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
+import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -24,15 +32,24 @@ public class WebSocketEventListener {
     private final GetParticipantsService getParticipantsService;
     private final ParticipantRepository participantRepository;
     private final CompleteStudyRoomService completeStudyRoomService;
+    private final TaskScheduler taskScheduler;
+    private final StudyRoomHostService studyRoomHostService;
+    private final StudyRoomRepository studyRoomRepository;
 
     public WebSocketEventListener(SimpMessagingTemplate messagingTemplate,
                                   GetParticipantsService getParticipantsService,
                                   ParticipantRepository participantRepository,
-                                  CompleteStudyRoomService completeStudyRoomService) {
+                                  CompleteStudyRoomService completeStudyRoomService,
+                                  TaskScheduler taskScheduler,
+                                  StudyRoomHostService studyRoomHostService,
+                                  StudyRoomRepository studyRoomRepository) {
         this.messagingTemplate = messagingTemplate;
         this.getParticipantsService = getParticipantsService;
         this.participantRepository = participantRepository;
         this.completeStudyRoomService = completeStudyRoomService;
+        this.taskScheduler = taskScheduler;
+        this.studyRoomHostService = studyRoomHostService;
+        this.studyRoomRepository = studyRoomRepository;
     }
 
     @EventListener
@@ -41,39 +58,77 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
         Long participantId = (Long) headerAccessor.getSessionAttributes().get(PARTICIPATE_ID_HEADER);
-        log.info("participantId: " + participantId);
+        Long studyRoomId = (Long) headerAccessor.getSessionAttributes().get(STUDY_ROOM_ID_HEADER);
+
+        log.info("participantId: {}", participantId);
+        log.info("studyRoomId: {}", studyRoomId);
+
+        if (participantId == null || studyRoomId == null) {
+            log.warn("ParticipantId or StudyRoomId is missing in session attributes");
+            return;
+        }
+
+        handleParticipantDisconnect(participantId, studyRoomId);
+
+        log.info("[web socket] - handleWebSocketDisconnectListener 메서드 / 끝");
+    }
+
+    private void handleParticipantDisconnect(Long participantId, Long studyRoomId) {
+        Participant participant = participantRepository.findById(participantId)
+                .orElseThrow(ParticipantNotFoundException::new);
+
+        if (participant.isDeleted()) {
+            log.info("Participant {} is already deleted", participant.id().value());
+            return;
+        }
+
+        participant.pend();
+        participantRepository.save(participant);
+        log.info("participant {} 상태를 PENDING 으로 변경", participant.id().value());
+
+        schedulePendingParticipantCheck(participantId, studyRoomId);
+    }
+
+    private void schedulePendingParticipantCheck(Long participantId, Long studyRoomId) {
+        taskScheduler.schedule(() -> checkPendingParticipantAndDelete(participantId, studyRoomId),
+                new Date(System.currentTimeMillis() + 10000));
+    }
+
+    private void checkPendingParticipantAndDelete(Long participantId, Long studyRoomId) {
+        log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 시작");
 
         Participant participant = participantRepository.findById(participantId)
                 .orElseThrow(ParticipantNotFoundException::new);
 
-        Long studyRoomId = (Long) headerAccessor.getSessionAttributes().get(STUDY_ROOM_ID_HEADER);
-        log.info("studyRoomId: " + studyRoomId);
-
-        if (participant != null && studyRoomId != null) {
-            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
-
+        if (participant.isPending()) {
             participant.delete();
-
             participantRepository.save(participant);
+            log.info("participant {} 상태를 DELETED 로 변경", participant.id().value());
 
-            log.info("participant: " + participant.id().value() + " : " + participant.status().toString());
-
-            Long participantCount = participantRepository.countActiveBy(StudyRoomId.of(studyRoomId));
+            Long participantCount = participantRepository.countNotDeletedBy(StudyRoomId.of(studyRoomId));
 
             if (participantCount == 0) {
                 completeStudyRoomService.completeStudy(StudyRoomId.of(studyRoomId));
+                log.info("studyRoom {} 스터디 종료", studyRoomId);
 
-                log.info("[web socket] - handleWebSocketDisconnectListener 메서드 / 끝");
+                log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 끝");
                 return;
             }
 
-            ParticipantSummariesDto participantSummariesDto = getParticipantsService
-                    .activeParticipants(StudyRoomId.of(studyRoomId));
+            StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
+                    .orElseThrow(StudyRoomNotFoundException::new);
 
-            messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
-                    , participantSummariesDto);
+            if (participant.isHost(studyRoom.hostId().value())) {
+                studyRoomHostService.transferHost(StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
+            }
         }
 
-        log.info("[web socket] - handleWebSocketDisconnectListener 메서드 / 끝");
+        ParticipantSummariesDto participantSummariesDto = getParticipantsService
+                .activeParticipants(StudyRoomId.of(studyRoomId));
+
+        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
+                , participantSummariesDto);
+
+        log.info("[web socket] - CheckPendingParticipantAndDelete 메서드 / 끝");
     }
 }

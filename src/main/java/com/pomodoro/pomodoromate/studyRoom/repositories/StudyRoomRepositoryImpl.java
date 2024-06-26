@@ -6,6 +6,8 @@ import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.models.QStudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.Step;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
+import com.pomodoro.pomodoromate.user.models.QUser;
+import com.pomodoro.pomodoromate.user.models.UserId;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -62,6 +64,26 @@ public class StudyRoomRepositoryImpl implements StudyRoomRepositoryQueryDsl {
                         .from(studyRoom)
                         .where(studyRoom.id.eq(id))
                         .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                        .fetchOne());
+    }
+
+    @Override
+    public Optional<StudyRoom> findParticipatingRoomBy(UserId userId) {
+        QStudyRoom studyRoom = QStudyRoom.studyRoom;
+        QParticipant participant = QParticipant.participant;
+        QUser user = QUser.user;
+
+        return Optional.ofNullable(
+                queryFactory
+                        .select(studyRoom)
+                        .from(studyRoom)
+                        .innerJoin(participant)
+                        .on(studyRoom.id.eq(participant.studyRoomId.value))
+                        .innerJoin(user)
+                        .on(participant.userId.eq(userId))
+                        .where(participant.status.ne(Status.DELETED).and(
+                                studyRoom.step.ne(Step.COMPLETED)
+                        ))
                         .fetchOne());
     }
 

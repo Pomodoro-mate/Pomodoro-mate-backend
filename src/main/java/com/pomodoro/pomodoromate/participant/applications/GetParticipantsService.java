@@ -1,6 +1,7 @@
 package com.pomodoro.pomodoromate.participant.applications;
 
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
@@ -19,9 +20,14 @@ public class GetParticipantsService {
 
     @Transactional(readOnly = true)
     public ParticipantSummariesDto activeParticipants(StudyRoomId studyRoomId) {
-        List<Participant> participants = participantRepository.findAllActiveBy(studyRoomId);
+        List<Participant> participants = participantRepository.findAllNotDeletedBy(studyRoomId);
 
-        return new ParticipantSummariesDto(participants.stream()
-                .map(Participant::toSummaryDto).toList());
+        List<ParticipantSummaryDto> participantSummaryDtos = participants.stream()
+                .map(participant -> participant.isHost(studyRoomId.value())
+                        ? participant.toSummaryDto(true)
+                        : participant.toSummaryDto(false))
+                .toList();
+
+        return new ParticipantSummariesDto(participantSummaryDtos);
     }
 }

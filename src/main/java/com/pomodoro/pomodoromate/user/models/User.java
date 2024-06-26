@@ -19,7 +19,7 @@ public class User extends BaseEntity {
     private Long id;
 
     @Embedded
-    private Username username;
+    private Email email;
 
     @Embedded
     private UserInfo info;
@@ -34,9 +34,9 @@ public class User extends BaseEntity {
     }
 
     @Builder
-    public User(Long id, Username username, UserInfo info, LoginType loginType) {
+    public User(Long id, Email email, UserInfo info, LoginType loginType) {
         this.id = id;
-        this.username = username;
+        this.email = email;
         this.info = info;
         this.loginType = loginType;
         this.status = Status.ACTIVE;
@@ -53,8 +53,8 @@ public class User extends BaseEntity {
         return UserId.of(id);
     }
 
-    public Username username() {
-        return username;
+    public Email email() {
+        return email;
     }
 
     public UserInfo info() {

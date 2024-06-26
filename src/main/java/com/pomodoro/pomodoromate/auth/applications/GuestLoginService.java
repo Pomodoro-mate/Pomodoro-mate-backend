@@ -4,7 +4,6 @@ import com.pomodoro.pomodoromate.auth.dtos.CreateGuestRequest;
 import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
 import com.pomodoro.pomodoromate.auth.exceptions.LoginFailed;
 import com.pomodoro.pomodoromate.user.models.User;
-import com.pomodoro.pomodoromate.user.models.UserId;
 import com.pomodoro.pomodoromate.user.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +24,7 @@ public class GuestLoginService {
             User guest = User.guest(request.getUserInfo());
 
             User saved = userRepository.save(guest);
+
             TokenDto tokenDto = issueTokenService.issue(saved.id());
 
             return tokenDto;

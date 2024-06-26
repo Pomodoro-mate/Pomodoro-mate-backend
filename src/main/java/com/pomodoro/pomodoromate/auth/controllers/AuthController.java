@@ -1,12 +1,10 @@
 package com.pomodoro.pomodoromate.auth.controllers;
 
+import com.pomodoro.pomodoromate.auth.applications.GoogleLoginService;
 import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
 import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
-import com.pomodoro.pomodoromate.auth.dtos.CreateGuestRequest;
-import com.pomodoro.pomodoromate.auth.dtos.CreateGuestRequestDto;
-import com.pomodoro.pomodoromate.auth.dtos.LoginResponseDto;
-import com.pomodoro.pomodoromate.auth.dtos.ReissuedTokenDto;
-import com.pomodoro.pomodoromate.auth.dtos.TokenDto;
+import com.pomodoro.pomodoromate.auth.dtos.*;
+import com.pomodoro.pomodoromate.auth.utils.GoogleUtil;
 import com.pomodoro.pomodoromate.common.utils.HttpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,12 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "인증 API")
 @Slf4j
@@ -32,13 +25,20 @@ public class AuthController {
     private final GuestLoginService guestLoginService;
     private final IssueTokenService issueTokenService;
     private final HttpUtil httpUtil;
+    private final GoogleLoginService googleLoginService;
+    private final GoogleUtil googleUtil;
 
     public AuthController(GuestLoginService guestLoginService,
                           IssueTokenService issueTokenService,
-                          HttpUtil httpUtil) {
+                          HttpUtil httpUtil,
+                          GoogleLoginService googleLoginService,
+                          GoogleUtil googleUtil
+    ) {
         this.guestLoginService = guestLoginService;
         this.issueTokenService = issueTokenService;
         this.httpUtil = httpUtil;
+        this.googleLoginService = googleLoginService;
+        this.googleUtil = googleUtil;
     }
 
     @Operation(summary = "게스트 로그인")
@@ -87,5 +87,28 @@ public class AuthController {
         response.addCookie(cookie);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "구글 로그인 페이지 URL")
+    @PostMapping("/v1/oauth2/google")
+    public String googleLoginUrl() {
+        String googleAuthUrl = googleUtil.getGoogleOAuth2RedirectUrl();
+
+        return googleAuthUrl;
+    }
+
+    @Operation(summary = "구글 로그인")
+    @GetMapping("/v1/oauth2/google")
+    public ResponseEntity<LoginResponseDto> googleLogin(
+            @RequestParam(value = "code") String authCode
+    ) {
+        GoogleResponse googleTokenResponse = googleUtil.getGoogleLoginAccessToken(authCode);
+
+        GoogleInfoResponse userInformationResponse = googleLoginService.getGoogleUserInformation(googleTokenResponse);
+
+        TokenDto token = googleLoginService.login(userInformationResponse);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new LoginResponseDto(token.accessToken()));
     }
 }

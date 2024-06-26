@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class GetStudyRoomService {
     private final StudyRoomRepository studyRoomRepository;
@@ -35,10 +37,13 @@ public class GetStudyRoomService {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId)
                 .orElseThrow(StudyRoomNotFoundException::new);
 
-        List<Participant> participants = participantRepository.findAllActiveBy(studyRoom.id());
+        List<Participant> participants = participantRepository.findAllNotDeletedBy(studyRoom.id());
 
         List<ParticipantSummaryDto> participantSummaryDtos = participants.stream()
-                .map(Participant::toSummaryDto).toList();
+                .map(participant -> participant.isHost(studyRoom.hostId().value())
+                        ? participant.toSummaryDto(true)
+                        : participant.toSummaryDto(false))
+        .toList();
 
         return studyRoom.toDetailDto(participantSummaryDtos);
     }

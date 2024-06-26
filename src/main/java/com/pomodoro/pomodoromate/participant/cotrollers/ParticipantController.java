@@ -4,8 +4,11 @@ import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService
 import com.pomodoro.pomodoromate.participant.applications.LeaveStudyService;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequest;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipateRequestDto;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipateResponseDto;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
+import com.pomodoro.pomodoromate.studyRoom.applications.StudyRoomHostService;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,10 +16,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,9 +49,12 @@ public class ParticipantController {
     @PostMapping("studyrooms/{studyRoomId}/participants")
     public ResponseEntity<ParticipateResponseDto> participate(
             @RequestAttribute UserId userId,
-            @PathVariable Long studyRoomId
+            @PathVariable Long studyRoomId,
+            @Validated @RequestBody ParticipateRequestDto requestDto
     ) {
-        Long participantId = participateService.participate(userId, StudyRoomId.of(studyRoomId));
+        ParticipateRequest request = ParticipateRequest.of(requestDto);
+
+        Long participantId = participateService.participate(request, userId, StudyRoomId.of(studyRoomId));
 
         ParticipantSummariesDto participantSummariesDto = getParticipantsService
                 .activeParticipants(StudyRoomId.of(studyRoomId));
@@ -67,6 +75,12 @@ public class ParticipantController {
             @PathVariable Long participantId
     ) {
         leaveStudyService.leaveStudy(userId, StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
+
+        ParticipantSummariesDto participantSummariesDto = getParticipantsService
+                .activeParticipants(StudyRoomId.of(studyRoomId));
+
+        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
+                , participantSummariesDto);
 
         return ResponseEntity.noContent().build();
     }

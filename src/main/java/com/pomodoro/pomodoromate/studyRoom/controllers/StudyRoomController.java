@@ -2,12 +2,15 @@ package com.pomodoro.pomodoromate.studyRoom.controllers;
 
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
 import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
+import com.pomodoro.pomodoromate.studyRoom.applications.EditStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
 import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
 import com.pomodoro.pomodoromate.studyRoom.applications.StudyProgressService;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequestDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomResponseDto;
+import com.pomodoro.pomodoromate.studyRoom.dtos.EditStudyRoomRequest;
+import com.pomodoro.pomodoromate.studyRoom.dtos.EditStudyRoomRequestDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyProgressRequestDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
@@ -27,6 +30,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,17 +44,20 @@ public class StudyRoomController {
     private final GetStudyRoomService getStudyRoomService;
     private final StudyProgressService studyProgressService;
     private final ParticipateService participateService;
+    private final EditStudyRoomService editStudyRoomService;
 
     public StudyRoomController(CreateStudyRoomService createStudyRoomService,
                                GetStudyRoomsService getStudyRoomsService,
                                GetStudyRoomService getStudyRoomService,
                                StudyProgressService studyProgressService,
-                               ParticipateService participateService) {
+                               ParticipateService participateService,
+                               EditStudyRoomService editStudyRoomService) {
         this.createStudyRoomService = createStudyRoomService;
         this.getStudyRoomsService = getStudyRoomsService;
         this.getStudyRoomService = getStudyRoomService;
         this.studyProgressService = studyProgressService;
         this.participateService = participateService;
+        this.editStudyRoomService = editStudyRoomService;
     }
 
     @Operation(summary = "스터디룸 목록 조회")
@@ -86,7 +93,7 @@ public class StudyRoomController {
 
         Long studyRoomId = createStudyRoomService.create(request, userId);
 
-        Long participantId = participateService.participate(userId, StudyRoomId.of(studyRoomId));
+        Long participantId = participateService.participateForCreator(userId, StudyRoomId.of(studyRoomId));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new CreateStudyRoomResponseDto(studyRoomId, participantId));
@@ -103,5 +110,20 @@ public class StudyRoomController {
 
         studyProgressService.proceedToNextStep(
                 userId, StudyRoomId.of(studyRoomId), Step.valueOf(requestDto.step()));
+    }
+
+    @Operation(summary = "스터디룸 정보 수정")
+    @ApiResponse(responseCode = "204")
+    @PutMapping("api/studyrooms/{studyRoomId}")
+    public ResponseEntity<Void> edit(
+            @RequestAttribute UserId userId,
+            @PathVariable Long studyRoomId,
+            @Validated @RequestBody EditStudyRoomRequestDto requestDto
+    ) {
+        EditStudyRoomRequest request = EditStudyRoomRequest.of(requestDto);
+
+        editStudyRoomService.edit(request, StudyRoomId.of(studyRoomId), userId);
+
+        return ResponseEntity.noContent().build();
     }
 }

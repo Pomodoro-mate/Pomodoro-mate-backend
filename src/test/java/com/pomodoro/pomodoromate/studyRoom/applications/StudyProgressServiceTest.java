@@ -1,6 +1,5 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
-import com.pomodoro.pomodoromate.config.JpaAuditingConfig;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotInRoomException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
@@ -18,28 +17,24 @@ import com.pomodoro.pomodoromate.user.models.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
 class StudyProgressServiceTest {
     private ValidateUserService validateUserService;
     private StudyRoomRepository studyRoomRepository;
     private StudyProgressService studyProgressService;
     private ParticipantRepository participantRepository;
-
-    @SpyBean
     private SimpMessagingTemplate messagingTemplate;
 
     @BeforeEach
@@ -47,6 +42,7 @@ class StudyProgressServiceTest {
         validateUserService = mock(ValidateUserService.class);
         studyRoomRepository = mock(StudyRoomRepository.class);
         participantRepository = mock(ParticipantRepository.class);
+        messagingTemplate = mock(SimpMessagingTemplate.class);
         studyProgressService = new StudyProgressService(
                 validateUserService,
                 studyRoomRepository,
@@ -69,6 +65,8 @@ class StudyProgressServiceTest {
                 .studyRoomId(studyRoom.id())
                 .userId(userId)
                 .build();
+
+        studyRoom.assignHost(participant.id());
 
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
@@ -123,6 +121,8 @@ class StudyProgressServiceTest {
                 .userId(userId)
                 .build();
 
+        studyRoom.assignHost(participant.id());
+
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));
 
@@ -149,6 +149,8 @@ class StudyProgressServiceTest {
                 .studyRoomId(studyRoom.id())
                 .userId(userId)
                 .build();
+
+        studyRoom.assignHost(participant.id());
 
         given(studyRoomRepository.findById(studyRoom.id().value()))
                 .willReturn(Optional.of(studyRoom));

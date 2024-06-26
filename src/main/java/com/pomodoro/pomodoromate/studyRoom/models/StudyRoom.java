@@ -24,7 +24,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class StudyRoom {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @Embedded

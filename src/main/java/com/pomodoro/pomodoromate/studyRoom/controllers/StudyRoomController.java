@@ -1,11 +1,8 @@
 package com.pomodoro.pomodoromate.studyRoom.controllers;
 
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
-import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
-import com.pomodoro.pomodoromate.studyRoom.applications.EditStudyRoomService;
-import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
-import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
-import com.pomodoro.pomodoromate.studyRoom.applications.StudyProgressService;
+import com.pomodoro.pomodoromate.participant.models.ParticipantId;
+import com.pomodoro.pomodoromate.studyRoom.applications.*;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequest;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomRequestDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.CreateStudyRoomResponseDto;
@@ -27,14 +24,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "스터디룸 API")
 @RestController
@@ -45,19 +35,22 @@ public class StudyRoomController {
     private final StudyProgressService studyProgressService;
     private final ParticipateService participateService;
     private final EditStudyRoomService editStudyRoomService;
+    private final StudyRoomHostService studyRoomHostService;
 
     public StudyRoomController(CreateStudyRoomService createStudyRoomService,
                                GetStudyRoomsService getStudyRoomsService,
                                GetStudyRoomService getStudyRoomService,
                                StudyProgressService studyProgressService,
                                ParticipateService participateService,
-                               EditStudyRoomService editStudyRoomService) {
+                               EditStudyRoomService editStudyRoomService,
+                               StudyRoomHostService studyRoomHostService) {
         this.createStudyRoomService = createStudyRoomService;
         this.getStudyRoomsService = getStudyRoomsService;
         this.getStudyRoomService = getStudyRoomService;
         this.studyProgressService = studyProgressService;
         this.participateService = participateService;
         this.editStudyRoomService = editStudyRoomService;
+        this.studyRoomHostService = studyRoomHostService;
     }
 
     @Operation(summary = "스터디룸 목록 조회")
@@ -123,6 +116,18 @@ public class StudyRoomController {
         EditStudyRoomRequest request = EditStudyRoomRequest.of(requestDto);
 
         editStudyRoomService.edit(request, StudyRoomId.of(studyRoomId), userId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "방장 넘기기")
+    @PatchMapping("api/studyrooms/{studyRoomId}/host/{participantId}")
+    public ResponseEntity<Void> transferHost(
+            @RequestAttribute UserId userId,
+            @PathVariable Long studyRoomId,
+            @PathVariable Long participantId
+    ) {
+        studyRoomHostService.transferHost(userId, StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
 
         return ResponseEntity.noContent().build();
     }

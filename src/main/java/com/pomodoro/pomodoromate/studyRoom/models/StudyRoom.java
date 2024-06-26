@@ -9,7 +9,6 @@ import com.pomodoro.pomodoromate.studyRoom.exceptions.HostExistsException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.InvalidStepException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.MaxParticipantExceededException;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyAlreadyCompletedException;
-import javax.persistence.GenerationType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

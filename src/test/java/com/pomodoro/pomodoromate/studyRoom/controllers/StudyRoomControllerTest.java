@@ -6,11 +6,7 @@ import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.common.dtos.PageDto;
 import com.pomodoro.pomodoromate.config.SecurityConfig;
 import com.pomodoro.pomodoromate.participant.applications.ParticipateService;
-import com.pomodoro.pomodoromate.studyRoom.applications.CreateStudyRoomService;
-import com.pomodoro.pomodoromate.studyRoom.applications.EditStudyRoomService;
-import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomService;
-import com.pomodoro.pomodoromate.studyRoom.applications.GetStudyRoomsService;
-import com.pomodoro.pomodoromate.studyRoom.applications.StudyProgressService;
+import com.pomodoro.pomodoromate.studyRoom.applications.*;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummariesDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomSummaryDto;
@@ -57,6 +53,9 @@ class StudyRoomControllerTest {
 
     @MockBean
     private EditStudyRoomService editStudyRoomService;
+
+    @MockBean
+    private StudyRoomHostService studyRoomHostService;
 
     @SpyBean
     private JwtUtil jwtUtil;

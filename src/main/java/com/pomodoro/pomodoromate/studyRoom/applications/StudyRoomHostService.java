@@ -49,11 +49,7 @@ public class StudyRoomHostService {
 
         assignHost(newHostParticipant.id(), studyRoomId);
 
-        ParticipantSummariesDto participantSummariesDto = getParticipantsService
-                .activeParticipants(studyRoomId);
-
-        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
-                , participantSummariesDto);
+        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/host", newHostId);
     }
 
     @Transactional

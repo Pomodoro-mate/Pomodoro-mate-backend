@@ -1,5 +1,7 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.participant.applications.GetParticipantsService;
+import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummariesDto;
 import com.pomodoro.pomodoromate.participant.exceptions.ParticipantNotFoundException;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
@@ -9,6 +11,7 @@ import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.models.UserId;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +19,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyRoomHostService {
     private final StudyRoomRepository studyRoomRepository;
     private final ParticipantRepository participantRepository;
+    private final GetParticipantsService getParticipantsService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public StudyRoomHostService(StudyRoomRepository studyRoomRepository,
-                                ParticipantRepository participantRepository) {
+                                ParticipantRepository participantRepository,
+                                GetParticipantsService getParticipantsService,
+                                SimpMessagingTemplate messagingTemplate) {
         this.studyRoomRepository = studyRoomRepository;
         this.participantRepository = participantRepository;
+        this.getParticipantsService = getParticipantsService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
-    public void transferHost(UserId userId, StudyRoomId studyRoomId, ParticipantId participantId) {
+    public void transferHost(UserId userId, StudyRoomId studyRoomId, ParticipantId newHostId) {
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId.value())
                 .orElseThrow(StudyRoomNotFoundException::new);
 
@@ -33,12 +42,18 @@ public class StudyRoomHostService {
 
         studyRoom.validateHost(hostParticipant.id());
 
-        Participant newHostParticipant = participantRepository.findBy(participantId)
+        Participant newHostParticipant = participantRepository.findBy(newHostId)
                 .orElseThrow(ParticipantNotFoundException::new);
 
         studyRoom.excludeHost();
 
         assignHost(newHostParticipant.id(), studyRoomId);
+
+        ParticipantSummariesDto participantSummariesDto = getParticipantsService
+                .activeParticipants(studyRoomId);
+
+        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/participants"
+                , participantSummariesDto);
     }
 
     @Transactional

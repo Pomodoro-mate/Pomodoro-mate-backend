@@ -119,7 +119,7 @@ public class WebSocketEventListener {
                     .orElseThrow(StudyRoomNotFoundException::new);
 
             if (participant.isHost(studyRoom.hostId().value())) {
-                studyRoomHostService.transferHost(StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
+                studyRoomHostService.autoTransferHost(StudyRoomId.of(studyRoomId), ParticipantId.of(participantId));
             }
         }
 

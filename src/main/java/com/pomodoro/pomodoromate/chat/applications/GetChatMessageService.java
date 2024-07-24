@@ -16,30 +16,24 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class ChatMessageService {
+public class GetChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final SimpMessagingTemplate template;
 
-    public ChatMessageService(
+    public GetChatMessageService(
             ChatMessageRepository chatMessageRepository,
             SimpMessagingTemplate template) {
         this.chatMessageRepository = chatMessageRepository;
         this.template = template;
     }
 
-    @Transactional
-    public void sendMessage(ChatRequestDto chatRequestDto) {
-        Chat chat = Chat.builder()
-                .studyRoomId(StudyRoomId.of(chatRequestDto.studyRoomId()))
-                .participantId(ParticipantId.of(chatRequestDto.participantId()))
-                .writer(Writer.of(chatRequestDto.writer()))
-                .message(Message.of(chatRequestDto.message()))
-                .build();
+    @Transactional(readOnly = true)
+    public void getChatsForEntry(StudyRoomId studyRoomId) {
+        List<Chat> chats = chatMessageRepository.findAllBy(studyRoomId);
 
-        Chat saved = chatMessageRepository.save(chat);
+        List<ChatSummaryDto> chatSummaryDtos = chats.stream()
+                .map(Chat::toSummaryDto).toList();
 
-        ChatSummaryDto chatSummaryDto = saved.toSummaryDto();
-
-        template.convertAndSend("/sub/chat/room/" + chatSummaryDto.roomId(), chatSummaryDto);
+        template.convertAndSend("/sub/user/chat", new ChatSummariesDto(chatSummaryDtos));
     }
 }

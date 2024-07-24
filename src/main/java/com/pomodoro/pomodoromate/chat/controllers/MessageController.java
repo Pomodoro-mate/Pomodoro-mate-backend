@@ -1,25 +1,23 @@
 package com.pomodoro.pomodoromate.chat.controllers;
 
-import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
 import com.pomodoro.pomodoromate.chat.applications.ChatMessageService;
+import com.pomodoro.pomodoromate.chat.applications.GetChatMessageService;
 import com.pomodoro.pomodoromate.chat.dtos.ChatRequestDto;
-import com.pomodoro.pomodoromate.chat.dtos.ChatSummariesDto;
-import com.pomodoro.pomodoromate.chat.dtos.ChatSummaryDto;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MessageController {
-    private final SimpMessagingTemplate template;
+    private final GetChatMessageService getChatMessageService;
     private final ChatMessageService chatMessageService;
-    private final JwtUtil jwtUtil;
 
-    public MessageController(SimpMessagingTemplate template, ChatMessageService chatMessageService, JwtUtil jwtUtil) {
-        this.template = template;
+    public MessageController(
+            ChatMessageService chatMessageService,
+            GetChatMessageService getChatMessageService
+    ) {
+        this.getChatMessageService = getChatMessageService;
         this.chatMessageService = chatMessageService;
-        this.jwtUtil = jwtUtil;
     }
 
     @MessageMapping("/user/chat/enter")
@@ -27,9 +25,7 @@ public class MessageController {
     ) {
         StudyRoomId studyRoomId = new StudyRoomId(1L);
 
-        ChatSummariesDto chatSummariesDto = chatMessageService.findChats(studyRoomId);
-
-        template.convertAndSend("/sub/user/chat", chatSummariesDto);
+        getChatMessageService.getChatsForEntry(studyRoomId);
     }
 
 
@@ -37,8 +33,6 @@ public class MessageController {
     public void message(
             ChatRequestDto chatRequestDto
     ) {
-        ChatSummaryDto chatSummaryDto = chatMessageService.save(chatRequestDto);
-
-        template.convertAndSend("/sub/chat/room/" + chatSummaryDto.roomId(), chatSummaryDto);
+        chatMessageService.sendMessage(chatRequestDto);
     }
 }

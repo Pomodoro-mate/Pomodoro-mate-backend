@@ -3,6 +3,7 @@ package com.pomodoro.pomodoromate.auth.filters;
 import com.pomodoro.pomodoromate.auth.exceptions.AccessTokenExpiredException;
 import com.pomodoro.pomodoromate.auth.exceptions.TokenDecodingFailedException;
 import com.pomodoro.pomodoromate.auth.utils.JwtUtil;
+import com.pomodoro.pomodoromate.common.exceptions.ExceptionResponse;
 import com.pomodoro.pomodoromate.user.models.UserId;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setStatus(exception.statusCode().value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(exception.message());
+            response.getWriter().write(ExceptionResponse.of(exception.message()).toString());
         }
     }
 }

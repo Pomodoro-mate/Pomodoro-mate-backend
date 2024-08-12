@@ -5,6 +5,6 @@ import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 
 import java.util.List;
 
-public interface ChatMessageRepositoryQueryDsl {
+public interface ChatRepositoryQueryDsl {
     List<Chat> findAllBy(StudyRoomId studyRoomId);
 }

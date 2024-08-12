@@ -1,5 +1,6 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.chat.repositories.ChatRepository;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -28,14 +29,16 @@ class GetStudyRoomServiceTest {
     private ParticipantRepository participantRepository;
     private ValidateUserService validateUserService;
     private GetStudyRoomService getStudyRoomService;
+    private ChatRepository chatRepository;
 
     @BeforeEach
     void setUp() {
         studyRoomRepository = mock(StudyRoomRepository.class);
         participantRepository = mock(ParticipantRepository.class);
         validateUserService = mock(ValidateUserService.class);
+        chatRepository = mock(ChatRepository.class);
         getStudyRoomService = new GetStudyRoomService(
-                studyRoomRepository, participantRepository, validateUserService);
+                studyRoomRepository, participantRepository, validateUserService, chatRepository);
     }
 
     @Test

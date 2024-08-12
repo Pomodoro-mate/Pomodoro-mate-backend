@@ -2,8 +2,6 @@ package com.pomodoro.pomodoromate.chat.repositories;
 
 import com.pomodoro.pomodoromate.chat.models.Chat;
 import com.pomodoro.pomodoromate.chat.models.QChat;
-import com.pomodoro.pomodoromate.common.models.Status;
-import com.pomodoro.pomodoromate.participant.models.QParticipant;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -11,10 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class ChatMessageRepositoryImpl implements ChatMessageRepositoryQueryDsl {
+public class ChatRepositoryImpl implements ChatRepositoryQueryDsl {
     private final JPAQueryFactory queryFactory;
 
-    public ChatMessageRepositoryImpl(JPAQueryFactory queryFactory) {
+    public ChatRepositoryImpl(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 

@@ -1,5 +1,5 @@
 package com.pomodoro.pomodoromate.user.models;
 
 public enum LoginType {
-    GUEST , GOOGLE
+    GUEST , GOOGLE , KAKAO
 }

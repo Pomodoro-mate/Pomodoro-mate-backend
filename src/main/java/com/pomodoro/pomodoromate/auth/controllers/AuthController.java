@@ -3,8 +3,10 @@ package com.pomodoro.pomodoromate.auth.controllers;
 import com.pomodoro.pomodoromate.auth.applications.GoogleLoginService;
 import com.pomodoro.pomodoromate.auth.applications.GuestLoginService;
 import com.pomodoro.pomodoromate.auth.applications.IssueTokenService;
+import com.pomodoro.pomodoromate.auth.applications.KakaoLoginService;
 import com.pomodoro.pomodoromate.auth.dtos.*;
 import com.pomodoro.pomodoromate.auth.utils.GoogleUtil;
+import com.pomodoro.pomodoromate.auth.utils.KakaoUtil;
 import com.pomodoro.pomodoromate.common.utils.HttpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @Tag(name = "인증 API")
 @Slf4j
 @RestController
@@ -27,18 +31,24 @@ public class AuthController {
     private final HttpUtil httpUtil;
     private final GoogleLoginService googleLoginService;
     private final GoogleUtil googleUtil;
+    private final KakaoUtil kakaoUtil;
+    private final KakaoLoginService kakaoLoginService;
 
     public AuthController(GuestLoginService guestLoginService,
                           IssueTokenService issueTokenService,
                           HttpUtil httpUtil,
                           GoogleLoginService googleLoginService,
-                          GoogleUtil googleUtil
+                          GoogleUtil googleUtil,
+                          KakaoUtil kakaoUtil,
+                          KakaoLoginService kakaoLoginService
     ) {
         this.guestLoginService = guestLoginService;
         this.issueTokenService = issueTokenService;
         this.httpUtil = httpUtil;
         this.googleLoginService = googleLoginService;
         this.googleUtil = googleUtil;
+        this.kakaoUtil = kakaoUtil;
+        this.kakaoLoginService = kakaoLoginService;
     }
 
     @Operation(summary = "게스트 로그인")
@@ -107,6 +117,21 @@ public class AuthController {
         GoogleInfoResponse userInformationResponse = googleLoginService.getGoogleUserInformation(googleTokenResponse);
 
         TokenDto token = googleLoginService.login(userInformationResponse);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new LoginResponseDto(token.accessToken()));
+    }
+
+    @Operation(summary = "카카오 로그인")
+    @GetMapping("/auth/kakao")
+    public ResponseEntity<LoginResponseDto> kakaoLogin(
+            @RequestParam(value = "code") String authCode
+    ) {
+        HashMap<String, String> kakaoTokenResponse = kakaoUtil.getAccessToken(authCode);
+
+        HashMap<String, String> userInformationResponse = kakaoUtil.getUser(kakaoTokenResponse);
+
+        TokenDto token = kakaoLoginService.login(userInformationResponse);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new LoginResponseDto(token.accessToken()));

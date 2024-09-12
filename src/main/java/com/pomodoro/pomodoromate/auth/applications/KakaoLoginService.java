@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.Optional;
 
-@Transactional
 @Service
 public class KakaoLoginService {
     private final UserRepository userRepository;
@@ -27,6 +26,7 @@ public class KakaoLoginService {
         this.issueTokenService = issueTokenService;
     }
 
+    @Transactional
     public TokenDto login(HashMap<String, String> userInformationResponse) {
         try {
             String email = userInformationResponse.get("email");
@@ -44,6 +44,7 @@ public class KakaoLoginService {
         }
     }
 
+    @Transactional
     private User createUser(String name, String email) {
         User kakaoUser = User.builder()
                 .info(UserInfo.of(name))

@@ -16,9 +16,13 @@ import java.util.Map;
 @Component
 public class KakaoUtil {
     private final String redirectUri;
+    private final String clientId;
 
-    public KakaoUtil(String redirectUri) {
+    public KakaoUtil(
+            String redirectUri,
+            String clientId) {
         this.redirectUri = redirectUri;
+        this.clientId = clientId;
     }
 
     public HashMap<String, String> getAccessToken(String code) {
@@ -36,7 +40,7 @@ public class KakaoUtil {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=f99c39ffcdf63597195c1d3678b78fde");
+            sb.append("&client_id=" + clientId);
             sb.append("&redirect_uri=" + redirectUri);
             sb.append("&code=" + code);
             bw.write(sb.toString());

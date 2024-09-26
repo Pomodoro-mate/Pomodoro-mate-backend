@@ -40,7 +40,7 @@ public class GoogleLoginService {
             String email = userInformationResponse.email();
             String name = userInformationResponse.name();
 
-            Optional<User> userOptional = userRepository.findByEmail(email);
+            Optional<User> userOptional = userRepository.findByEmail(Email.of(email));
 
             User user = userOptional.orElseGet(() -> createUser(name, email));
 

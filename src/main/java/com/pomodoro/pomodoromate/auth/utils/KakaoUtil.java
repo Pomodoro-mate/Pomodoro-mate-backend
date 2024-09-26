@@ -28,6 +28,8 @@ public class KakaoUtil {
     public HashMap<String, String> getAccessToken(String code) {
         HashMap<String, String> tokenInfo = new HashMap<>();
 
+        log.info("requestCode : {} ", code);
+
         String reqURL = "https://kauth.kakao.com/oauth/token";
 
         try {
@@ -43,6 +45,7 @@ public class KakaoUtil {
             sb.append("&client_id=" + clientId);
             sb.append("&redirect_uri=" + redirectUri);
             sb.append("&code=" + code);
+
             bw.write(sb.toString());
             bw.flush();
 
@@ -69,10 +72,8 @@ public class KakaoUtil {
             tokenInfo.put("expiresIn", String.valueOf(expiresIn));
 
             log.info("Access Token: {} ", tokenInfo.get("accessToken"));
-            log.info("Refresh Token: {} ", refreshToken);
-            log.info("Expires In: {} ", expiresIn);
-
-            log.info("accessToken : {} ", accessToken);
+            log.info("Refresh Token: {} ", tokenInfo.get("refreshToken"));
+            log.info("Expires In: {} ", tokenInfo.get("expiresIn"));
 
             br.close();
             bw.close();
@@ -123,6 +124,8 @@ public class KakaoUtil {
             userInformation.put("email", email);
 
             log.info("response body : {} ", userInformation);
+            log.info("nickname : {} ", userInformation.get("nickname"));
+            log.info("email : {} ", userInformation.get("email"));
         } catch (IOException e) {
             e.printStackTrace();
         }

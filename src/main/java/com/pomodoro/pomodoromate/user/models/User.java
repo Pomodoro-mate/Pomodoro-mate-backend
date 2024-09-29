@@ -2,13 +2,7 @@ package com.pomodoro.pomodoromate.user.models;
 
 import com.pomodoro.pomodoromate.common.models.BaseEntity;
 import com.pomodoro.pomodoromate.common.models.Status;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 
 @Entity
@@ -46,6 +40,14 @@ public class User extends BaseEntity {
         return User.builder()
                 .info(userInfo)
                 .loginType(LoginType.GUEST)
+                .build();
+    }
+
+    public static User kakao(UserInfo userInfo, Email email) {
+        return User.builder()
+                .info(userInfo)
+                .email(email)
+                .loginType(LoginType.KAKAO)
                 .build();
     }
 

@@ -65,6 +65,8 @@ public class StudyRoomHostService {
         studyRoom.excludeHost();
 
         assignHost(mostRecentParticipant.id(), studyRoomId);
+
+        messagingTemplate.convertAndSend("/sub/studyrooms/" + studyRoomId + "/host", mostRecentParticipant.id());
     }
 
     @Transactional

@@ -1,11 +1,14 @@
 package com.pomodoro.pomodoromate.studyRoom.applications;
 
+import com.pomodoro.pomodoromate.chat.models.Chat;
+import com.pomodoro.pomodoromate.chat.repositories.ChatRepository;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.repositories.ParticipantRepository;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
 import com.pomodoro.pomodoromate.studyRoom.exceptions.StudyRoomNotFoundException;
 import com.pomodoro.pomodoromate.studyRoom.models.StudyRoom;
+import com.pomodoro.pomodoromate.studyRoom.models.StudyRoomId;
 import com.pomodoro.pomodoromate.studyRoom.repositories.StudyRoomRepository;
 import com.pomodoro.pomodoromate.user.applications.ValidateUserService;
 import com.pomodoro.pomodoromate.user.models.UserId;
@@ -14,20 +17,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class GetStudyRoomService {
     private final StudyRoomRepository studyRoomRepository;
     private final ParticipantRepository participantRepository;
     private final ValidateUserService validateUserService;
+    private final ChatRepository chatRepository;
 
     public GetStudyRoomService(StudyRoomRepository studyRoomRepository,
                                ParticipantRepository participantRepository,
-                               ValidateUserService validateUserService) {
+                               ValidateUserService validateUserService,
+                               ChatRepository chatRepository) {
         this.studyRoomRepository = studyRoomRepository;
         this.participantRepository = participantRepository;
         this.validateUserService = validateUserService;
+        this.chatRepository = chatRepository;
     }
 
     @Transactional(readOnly = true)
@@ -39,12 +43,8 @@ public class GetStudyRoomService {
 
         List<Participant> participants = participantRepository.findAllNotDeletedBy(studyRoom.id());
 
-        List<ParticipantSummaryDto> participantSummaryDtos = participants.stream()
-                .map(participant -> participant.isHost(studyRoom.hostId().value())
-                        ? participant.toSummaryDto(true)
-                        : participant.toSummaryDto(false))
-        .toList();
+        List<Chat> chats = chatRepository.findAllBy(StudyRoomId.of(studyRoomId));
 
-        return studyRoom.toDetailDto(participantSummaryDtos);
+        return studyRoom.toDetailDto(participants, chats);
     }
 }

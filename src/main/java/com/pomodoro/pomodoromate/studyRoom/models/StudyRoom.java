@@ -1,7 +1,10 @@
 package com.pomodoro.pomodoromate.studyRoom.models;
 
+import com.pomodoro.pomodoromate.chat.dtos.ChatSummaryDto;
+import com.pomodoro.pomodoromate.chat.models.Chat;
 import com.pomodoro.pomodoromate.participant.dtos.ParticipantSummaryDto;
 import com.pomodoro.pomodoromate.participant.exceptions.ForbiddenStudyHostActionException;
+import com.pomodoro.pomodoromate.participant.models.Participant;
 import com.pomodoro.pomodoromate.participant.models.ParticipantId;
 import com.pomodoro.pomodoromate.studyRoom.dtos.NextStepStudyRoomDto;
 import com.pomodoro.pomodoromate.studyRoom.dtos.StudyRoomDetailDto;
@@ -150,9 +153,19 @@ public class StudyRoom {
         return updateAt;
     }
 
-    public StudyRoomDetailDto toDetailDto(List<ParticipantSummaryDto> participantSummaryDtos) {
+    public StudyRoomDetailDto toDetailDto(List<Participant> participants, List<Chat> chats) {
+        List<ParticipantSummaryDto> participantSummaryDtos = participants.stream()
+                .map(participant -> participant.isHost(this.hostId().value())
+                        ? participant.toSummaryDto(true)
+                        : participant.toSummaryDto(false))
+                .toList();
+
+        List<ChatSummaryDto> chatSummaryDtos = chats.stream()
+                .map(Chat::toSummaryDto)
+                .toList();
+
         return new StudyRoomDetailDto(id, info().name(), info.intro(),
-                step.toString(), timeSet.toDto(), participantSummaryDtos, updateAt());
+                step.toString(), timeSet.toDto(), participantSummaryDtos, chatSummaryDtos, updateAt());
     }
 
     public Integer maxParticipantCount() {
